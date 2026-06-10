@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Módulo 2 — El Control Interno Gubernamental (Contenido)</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#0a1628;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
+.pres{background:#0f2444;border-radius:14px;overflow:hidden;width:100%;max-width:860px;box-shadow:0 8px 40px rgba(0,0,0,.5)}
+.top-bar{background:#1a3a6b;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #4adc8c}
+.tbar{font-size:11px;color:#a8c8f0;letter-spacing:.06em;text-transform:uppercase}
+.obadge{background:rgba(255,255,255,.12);color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;margin-left:5px}
+.pbar{height:4px;background:rgba(255,255,255,.1)}
+.pfill{height:100%;background:linear-gradient(90deg,#1a7a4a,#4adc8c);transition:width .4s}
+.slide-area{height:500px;position:relative;overflow:hidden}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-start;align-items:flex-start;padding:30px 38px;opacity:0;transform:translateX(60px);transition:opacity .35s,transform .35s cubic-bezier(.4,0,.2,1);pointer-events:none;overflow-y:auto}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.exit{opacity:0;transform:translateX(-60px)}
+.slide.cover{background:linear-gradient(135deg,#0f2444 0%,#0a3a20 55%,#0f2444 100%);align-items:center;justify-content:center;text-align:center}
+.slide.light{background:#f5f8ff}
+.slide.dark{background:#0d1e38}
+.slide.done{background:#0d1e38;align-items:center;justify-content:center;text-align:center}
+.deco{position:absolute;top:0;right:0;width:200px;height:200px;background:rgba(74,220,140,.08);border-radius:0 0 0 100%;pointer-events:none}
+.deco2{position:absolute;bottom:0;left:0;width:150px;height:150px;background:rgba(74,220,140,.05);border-radius:0 100% 0 0;pointer-events:none}
+/* typography */
+.cv-badge{display:inline-block;background:#4adc8c;color:#0a3a1a;font-size:12px;font-weight:700;padding:7px 22px;border-radius:20px;letter-spacing:.08em;margin-bottom:16px}
+.cv-title{font-size:36px;font-weight:800;color:#fff;line-height:1.15;margin-bottom:10px}
+.cv-title span{color:#4adc8c}
+.cv-sub{font-size:13px;color:#a8c8f0;font-style:italic}
+.sh2{font-size:16px;font-weight:700;color:#1a3a6b;margin-bottom:14px;border-left:4px solid #4adc8c;padding-left:12px;width:100%}
+.sh2w{font-size:16px;font-weight:700;color:#4adc8c;margin-bottom:14px}
+.mb{background:#1a3a6b;border-radius:8px;padding:13px 17px;width:100%;margin-bottom:12px}
+.mb p{font-size:13.5px;color:#c8e0f8;line-height:1.7}
+.mb strong{color:#4adc8c}
+.tc{display:grid;grid-template-columns:1fr 1fr;gap:11px;width:100%}
+.ib{background:#fff;border:1px solid #d0e4f8;border-radius:8px;padding:12px 14px}
+.ib h4{font-size:11.5px;font-weight:700;color:#1a7a4a;text-transform:uppercase;letter-spacing:.04em;margin-bottom:7px}
+.ib ul{list-style:none}
+.ib ul li{font-size:12.5px;color:#334;padding:2px 0 2px 13px;position:relative;line-height:1.45}
+.ib ul li::before{content:'▸';position:absolute;left:0;color:#4adc8c;font-size:9px;top:4px}
+.ib p{font-size:12.5px;color:#334;line-height:1.6}
+/* systems grid */
+.sysgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;width:100%;margin-top:10px}
+.sc{border-radius:8px;padding:11px 10px;text-align:center}
+.sc.si{background:#1a3a6b;border:2px solid #4adc8c}
+.sc.se{background:#7a2020;border:2px solid #e08080}
+.sc.so{background:#1a4a2a;border:1.5px solid #4aaa6a}
+.sc .ss{font-size:11px;font-weight:800;margin-bottom:3px}
+.sc.si .ss{color:#4adc8c}.sc.se .ss{color:#ffb0b0}.sc.so .ss{color:#7adc9a}
+.sc .sn{font-size:10px;color:rgba(255,255,255,.8);line-height:1.3}
+/* objectives */
+.oitem{display:flex;align-items:flex-start;gap:11px;padding:9px 13px;background:#fff;border-radius:8px;margin-bottom:7px;border-left:3px solid #1a7a4a;width:100%}
+.onum{background:#1a7a4a;color:#fff;font-size:11px;font-weight:800;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.otxt{font-size:13px;color:#223;line-height:1.5}
+/* COSO cards */
+.cgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;width:100%;margin-top:10px}
+.cc{border-radius:8px;padding:12px 6px;text-align:center;cursor:pointer;transition:all .2s;border:2px solid transparent}
+.cc:hover{transform:translateY(-3px)}
+.cc.c1{background:#e8f0fb;border-color:#2563a8}.cc.c2{background:#fdf0e0;border-color:#c05a00}
+.cc.c3{background:#e8fdf0;border-color:#1a7a4a}.cc.c4{background:#f0e8fd;border-color:#6a3aad}
+.cc.c5{background:#fde8e8;border-color:#aa2020}
+.cico{font-size:22px;margin-bottom:6px}
+.cname{font-size:10px;font-weight:700;line-height:1.3}
+.cc.c1 .cname{color:#1a3a6b}.cc.c2 .cname{color:#7a3000}.cc.c3 .cname{color:#0a4a20}
+.cc.c4 .cname{color:#3a1060}.cc.c5 .cname{color:#7a0000}
+.cdet{background:#fff;border-radius:8px;padding:12px 16px;margin-top:10px;width:100%;font-size:13px;color:#334;line-height:1.65;border:1px solid #d0d8f0;min-height:50px;display:none}
+.cdet.vis{display:block}
+/* process steps */
+.psteps{display:flex;gap:8px;width:100%;margin-top:14px}
+.ps{flex:1;border-radius:8px;padding:14px 9px;text-align:center}
+.ps .pi{font-size:24px;margin-bottom:6px}
+.ps .pn{font-size:12px;font-weight:700;margin-bottom:4px}
+.ps .pd{font-size:10.5px;line-height:1.45;opacity:.88}
+.ps.p1{background:#1a3a6b;color:#c8e0ff}.ps.p2{background:#1a5a3a;color:#b0f0c8}
+.ps.p3{background:#5a1a6b;color:#e0b0f8}.ps.p4{background:#8a3000;color:#ffd0a0}
+/* UAI boxes */
+.uai-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;width:100%}
+/* info banner */
+.banner{border-radius:8px;padding:10px 14px;font-size:13px;line-height:1.6;width:100%;margin-top:10px}
+.banner.blue{background:#e8f4ff;color:#1a3a6b;border-left:3px solid #2563a8}
+.banner.green{background:#e8fff4;color:#0a3a20;border-left:3px solid #4adc8c}
+/* characteristics */
+.char-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;width:100%}
+.char-card{background:#fff;border-radius:8px;padding:13px 14px}
+.char-card h4{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px}
+.char-card.int1 h4{color:#2563a8;border-left:4px solid #2563a8;padding-left:8px}
+.char-card.int2 h4{color:#1a7a4a;border-left:4px solid #1a7a4a;padding-left:8px}
+.char-card p{font-size:12.5px;color:#334;line-height:1.6;margin-bottom:8px}
+.char-card ul{list-style:none}
+.char-card ul li{font-size:12px;color:#334;padding:2px 0 2px 13px;position:relative;line-height:1.4}
+.char-card ul li::before{content:'▸';position:absolute;left:0;color:#4adc8c;font-size:9px;top:3px}
+/* controls */
+.controls{background:#1a3a6b;border-top:1px solid rgba(255,255,255,.09);padding:12px 20px;display:flex;align-items:center;justify-content:space-between}
+.cbtn{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.16);color:#fff;padding:7px 18px;border-radius:7px;cursor:pointer;font-size:12px;transition:all .2s}
+.cbtn:hover:not(:disabled){background:rgba(255,255,255,.2)}
+.cbtn:disabled{opacity:.3;cursor:not-allowed}
+.sind{display:flex;gap:5px;justify-content:center;align-items:center}
+.di{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.2);cursor:pointer;transition:all .2s}
+.di.active{background:#4adc8c;transform:scale(1.3)}
+.sctr{font-size:11px;color:#a8c8f0;min-width:90px;text-align:right}
+</style>
+</head>
+<body>
+<div class="pres">
+  <div class="top-bar">
+    <div class="tbar">La Importancia del Control Interno en la APN</div>
+    <div><span class="obadge">SOFSA</span><span class="obadge">UAI</span></div>
+  </div>
+  <div class="pbar"><div class="pfill" id="prog" style="width:14%"></div></div>
+
+  <div class="slide-area" id="sa">
+
+    <!-- SLIDE 1: Portada -->
+    <div class="slide cover active" data-s="1">
+      <div class="deco"></div><div class="deco2"></div>
+      <div class="cv-badge">MÓDULO 2</div>
+      <div class="cv-title">El <span>Control Interno</span><br>Gubernamental</div>
+      <div class="cv-sub">Ley 24156 · Componentes COSO · Sistema de control</div>
+    </div>
+
+    <!-- SLIDE 2: Qué es el control — Ley 24156 -->
+    <div class="slide light" data-s="2">
+      <div class="sh2">¿Qué es el control?</div>
+      <div class="mb"><p>El <strong>control</strong> es un mecanismo preventivo y correctivo que permite detectar y corregir desviaciones, ineficiencias o incongruencias en la formulación, instrumentación, ejecución y evaluación de las acciones de una organización, a fin de procurar su cumplimiento bajo las normas que la rigen.</p></div>
+      <div style="font-size:13px;color:#1a3a6b;font-weight:700;margin-bottom:9px">La Ley n.° 24156 crea los siguientes sistemas:</div>
+      <div class="sysgrid">
+        <div class="sc si"><div class="sn"><strong style="color:#fff">Control Interno</strong>, regido por <strong style="color:#f0c040">SIGEN</strong></div></div>
+        <div class="sc se"><div class="sn"><strong style="color:#fff">Control Externo</strong>, regido por <strong style="color:#f0c040">AGN</strong></div></div>
+        <div class="sc so"><div class="sn"><strong style="color:#fff">Presupuestario</strong>, regido por <strong style="color:#f0c040">ONP</strong></div></div>
+        <div class="sc so"><div class="sn"><strong style="color:#fff">Crédito Público</strong>, regido por <strong style="color:#f0c040">ONCP</strong></div></div>
+        <div class="sc so"><div class="sn"><strong style="color:#fff">Tesorería</strong>, regida por <strong style="color:#f0c040">TGN</strong></div></div>
+        <div class="sc so"><div class="sn"><strong style="color:#fff">Contabilidad Gubernamental</strong>, regida por <strong style="color:#f0c040">CGN</strong></div></div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3: Qué es el CI -->
+    <div class="slide light" data-s="3">
+      <div class="sh2">¿Qué es el control interno? — Res. SIGEN n.° 172/14</div>
+      <div class="mb" style="margin-bottom:11px"><p>Proceso llevado a cabo por las autoridades superiores y el resto del personal, diseñado para proporcionar <strong>seguridad razonable</strong> en cuanto al logro de los objetivos institucionales:</p></div>
+      
+      <div class="oitem"><div class="onum">1</div><div class="otxt"><strong style="color:#1a7a4a">Eficacia y eficiencia</strong> de las operaciones institucionales.</div></div>
+      <div class="oitem"><div class="onum">2</div><div class="otxt"><strong style="color:#1a7a4a">Fiabilidad</strong> de la información financiera y administrativa.</div></div>
+      <div class="oitem"><div class="onum">3</div><div class="otxt"><strong style="color:#1a7a4a">Cumplimiento</strong> de las leyes y normas aplicables.</div></div>
+      <div class="banner blue" style="margin-top:9px">El <strong>Control Interno</strong> es un proceso continuo, llevado a cabo por personas, diseñado para proporcionar seguridad razonable en el cumplimiento de objetivos — no para obstaculizarlos.</div>
+    </div>
+
+    <!-- SLIDE 4: Características del CI -->
+    <div class="slide light" data-s="4">
+      <div class="sh2">Características del control interno</div>
+      <div class="char-grid">
+        <div class="char-card int1">
+          <h4>Es INTEGRAL</h4>
+          <p>Abarca los aspectos presupuestarios, económicos, financieros, patrimoniales, normativos y de gestión, la evaluación de programas, proyectos y operaciones, fundado en criterios de economía, eficiencia y eficacia.</p>
+          <ul>
+            <li>Eficacia y eficiencia en las operaciones</li>
+            <li>Confiabilidad de la información financiera</li>
+            <li>Cumplimiento de leyes y normas</li>
+            <li>Garantiza el logro de objetivos globales</li>
+          </ul>
+        </div>
+        <div class="char-card int2">
+          <h4>Es INTEGRADO</h4>
+          <p>Comprende todos los programas, proyectos y operaciones. No puede segregarse como área independiente — forma parte de los sistemas financieros, presupuestarios, contables y operativos.</p>
+          <ul>
+            <li>Integrado a la organización para disminuir riesgos</li>
+            <li>Genera una cultura de control</li>
+            <li>Es sustento de la buena gestión</li>
+            <li>Tiene efecto esencialmente preventivo</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- SLIDE 5: Componentes COSO -->
+    <div class="slide light" data-s="5">
+      <div class="sh2">Los 5 componentes del control interno — Modelo COSO</div>
+      <div style="font-size:13px;color:#557;margin-bottom:5px">Hacé clic en cada componente para ver su descripción:</div>
+      <div class="cgrid">
+        <div class="cc c1" onclick="showCoso(0)"><div class="cico">🏠</div><div class="cname">Ambiente de Control</div></div>
+        <div class="cc c2" onclick="showCoso(1)"><div class="cico">⚠️</div><div class="cname">Evaluación de Riesgos</div></div>
+        <div class="cc c3" onclick="showCoso(2)"><div class="cico">✅</div><div class="cname">Actividades de Control</div></div>
+        <div class="cc c4" onclick="showCoso(3)"><div class="cico">💬</div><div class="cname">Información y Comunicación</div></div>
+        <div class="cc c5" onclick="showCoso(4)"><div class="cico">🔎</div><div class="cname">Supervisión</div></div>
+      </div>
+      <div class="cdet" id="cosoDet"></div>
+      <div class="banner blue" style="margin-top:9px">Estos componentes están incluidos en las <strong>Normas Generales de Control Interno</strong> (Res. SIGEN n.° 172/14) y se basan en el Modelo COSO internacional.</div>
+    </div>
+
+    <!-- SLIDE 6: Proceso administrativo - interactive tiles -->
+    <div class="slide dark" data-s="6">
+      <div class="sh2w">El control en el proceso administrativo</div>
+      <div style="font-size:13px;color:#a8c8f0;margin-bottom:12px">El control es función esencial del proceso administrativo y no puede segregarse como área independiente. Hacé clic en cada etapa para ver su descripción:</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:9px;width:100%">
+        <div class="proc-tile" id="pt0" onclick="showProc(0)" style="background:#1a3a6b;border:2px solid #2563a8;border-radius:9px;padding:18px 10px;text-align:center;cursor:pointer;transition:all .2s">
+          <div style="font-size:28px;margin-bottom:7px">📋</div>
+          <div style="font-size:13px;font-weight:700;color:#c8e0ff">Planificación</div>
+        </div>
+        <div class="proc-tile" id="pt1" onclick="showProc(1)" style="background:#1a5a3a;border:2px solid #1a7a4a;border-radius:9px;padding:18px 10px;text-align:center;cursor:pointer;transition:all .2s">
+          <div style="font-size:28px;margin-bottom:7px">🏗️</div>
+          <div style="font-size:13px;font-weight:700;color:#b0f0c8">Organización</div>
+        </div>
+        <div class="proc-tile" id="pt2" onclick="showProc(2)" style="background:#5a1a6b;border:2px solid #7a3aad;border-radius:9px;padding:18px 10px;text-align:center;cursor:pointer;transition:all .2s">
+          <div style="font-size:28px;margin-bottom:7px">👥</div>
+          <div style="font-size:13px;font-weight:700;color:#e0b0f8">Dirección</div>
+        </div>
+        <div class="proc-tile" id="pt3" onclick="showProc(3)" style="background:#8a3000;border:2px solid #c05000;border-radius:9px;padding:18px 10px;text-align:center;cursor:pointer;transition:all .2s">
+          <div style="font-size:28px;margin-bottom:7px">🔍</div>
+          <div style="font-size:13px;font-weight:700;color:#ffd0a0">Control</div>
+        </div>
+      </div>
+      <div id="procDetail" style="background:rgba(255,255,255,.08);border-radius:8px;padding:13px 16px;font-size:13px;color:#e8f4ff;line-height:1.65;margin-top:12px;width:100%;min-height:52px;border-left:3px solid #4adc8c;display:none"></div>
+      <div style="background:rgba(255,255,255,.06);border-radius:8px;padding:13px 14px;border-top:3px solid #4adc8c;margin-top:10px;width:100%">
+        <h4 style="font-size:11.5px;font-weight:700;color:#4adc8c;text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px">Valor que agrega el control interno a la gestión</h4>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
+          <div style="text-align:center;padding:8px 4px;background:rgba(74,220,140,.08);border-radius:7px"><div style="font-size:20px;margin-bottom:4px">📊</div><div style="font-size:11px;color:#4adc8c;font-weight:600;line-height:1.35">Información financiera confiable y oportuna</div></div>
+          <div style="text-align:center;padding:8px 4px;background:rgba(74,220,140,.08);border-radius:7px"><div style="font-size:20px;margin-bottom:4px">🎯</div><div style="font-size:11px;color:#4adc8c;font-weight:600;line-height:1.35">Ayuda a alcanzar objetivos y previene pérdida de recursos</div></div>
+          <div style="text-align:center;padding:8px 4px;background:rgba(74,220,140,.08);border-radius:7px"><div style="font-size:20px;margin-bottom:4px">⚖️</div><div style="font-size:11px;color:#4adc8c;font-weight:600;line-height:1.35">Refuerza la confianza en el cumplimiento normativo</div></div>
+          <div style="text-align:center;padding:8px 4px;background:rgba(74,220,140,.08);border-radius:7px"><div style="font-size:20px;margin-bottom:4px">🛡️</div><div style="font-size:11px;color:#4adc8c;font-weight:600;line-height:1.35">Evita y reduce riesgos en el camino</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 7: SIGEN y UAI -->
+    <div class="slide light" data-s="7" style="padding:24px 32px">
+      <div class="sh2">¿Quién efectúa el control interno?</div>
+      <div class="uai-grid">
+        <div class="ib" style="border-top:3px solid #1a7a4a"><h4>SIGEN — Rol rector</h4><ul>
+          <li>Establece lineamientos normativos para todo el sistema</li>
+          <li>Opera a través de Sindicaturas Jurisdiccionales o Comisiones Fiscalizadoras</li>
+          <li>Brinda asesoramiento y asistencia técnica</li>
+          <li>Promueve cursos y talleres de capacitación</li>
+          <li>Propone al PEN modificaciones normativas</li>
+        </ul></div>
+        <div class="ib" style="border-top:3px solid #4adc8c"><h4>UAI — Unidades de Auditoría Interna</h4><ul>
+          <li>Examen posterior de actividades financieras y administrativas</li>
+          <li>Coordinadas y supervisadas por la SIGEN</li>
+          <li>Dependen jerárquicamente de la autoridad superior del organismo</li>
+          <li>Sus funciones se mantienen desligadas de las operaciones auditadas</li>
+          <li>Comprueban, reúnen evidencias y elaboran informes y recomendaciones</li>
+          <li>Servicio a toda la organización, desligado de las operaciones sujetas a examen</li>
+        </ul></div>
+      </div>
+      <div style="background:linear-gradient(135deg,#1a3a6b,#2563a8);border-radius:9px;padding:14px 18px;margin-top:11px;width:100%;border-left:4px solid #f0c040;box-shadow:0 3px 14px rgba(240,192,64,.18)">
+        <div style="font-size:11px;font-weight:800;color:#f0c040;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">⭐ Concepto clave</div>
+        <div style="font-size:13.5px;color:#fff;line-height:1.7">Todos los miembros de la organización tienen incumbencia en el control interno: las <strong style="color:#f0c040">autoridades superiores</strong> lo establecen, los <strong style="color:#4adc8c">auditores</strong> lo examinan, y el <strong style="color:#a8c8f0">resto del personal</strong> aplica las medidas en su ámbito.</div>
+      </div>
+    </div>
+
+    <!-- SLIDE 8: Cierre -->
+    <div class="slide done" data-s="8">
+      <div style="font-size:42px;margin-bottom:14px">📥</div>
+      <div style="font-size:22px;font-weight:700;color:#4adc8c;margin-bottom:12px">¡Contenido completado!</div>
+      <div style="font-size:14px;color:#a8c8f0;max-width:440px;line-height:1.75;margin-bottom:22px;text-align:center">
+        Ya recorriste el marco normativo del control interno, sus componentes y quiénes lo ejercen.<br><br>
+        <strong style="color:#fff">Antes de continuar con la evaluación,<br>descargá el material de referencia.</strong>
+      </div>
+      <a href="#" style="background:#4adc8c;color:#0a3a1a;font-weight:700;font-size:13px;padding:10px 28px;border-radius:8px;text-decoration:none;display:inline-block">📄 Descargar material</a>
+    </div>
+
+  </div><!-- slide-area -->
+
+  <div class="controls">
+    <button class="cbtn" id="btnP" onclick="goSlide(-1)" disabled>← Anterior</button>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+      <div class="sind" id="sind"></div>
+      <div class="sctr" id="sctr">Slide 1 de 8</div>
+    </div>
+    <button class="cbtn" id="btnN" onclick="goSlide(1)">Siguiente →</button>
+  </div>
+</div>
+
+<script>
+const TOTAL = 8;
+let cs = 1;
+
+const cosoData = [
+  '<strong style="color:#2563a8">Ambiente de Control:</strong> Conjunto de procesos, estándares y estructuras que proveen la base para el control interno en toda la organización. Incluye cinco (5) principios: integridad y valores éticos, responsabilidades de supervisión, estructura y autoridad, competencias del personal y rendición de cuentas.',
+  '<strong style="color:#c05a00">Evaluación de Riesgos:</strong> Se orienta al tratamiento de los riesgos internos y externos que enfrenta la organización. Incluye cuatro (4) principios: especificación de objetivos, identificación y análisis de riesgos, evaluación del riesgo de fraude, e identificación y análisis de cambios significativos.',
+  '<strong style="color:#1a7a4a">Actividades de Control:</strong> Acciones establecidas por las autoridades mediante políticas y procedimientos, orientadas a reducir los riesgos. Se llevan a cabo por todas las áreas, a través de procesos y tecnología. Incluye tres (3) principios: actividades de control, control sobre la tecnología, y políticas y procedimientos.',
+  '<strong style="color:#6a3aad">Información y Comunicación:</strong> La información es un elemento fundamental para el CI. La comunicación es un proceso permanente que se retroalimenta. Incluye tres (3) principios: relevancia de la información, comunicaciones internas y comunicaciones externas.',
+  '<strong style="color:#aa2020">Supervisión:</strong> Evaluaciones continuas o periódicas para determinar si cada uno de los componentes del CI está presente y se encuentra en funciones. Incluye dos (2) principios: evaluaciones continuas o periódicas, y evaluación y comunicación de deficiencias.'
+];
+
+function showCoso(i) {
+  const d = document.getElementById('cosoDet');
+  d.innerHTML = cosoData[i];
+  d.classList.add('vis');
+}
+
+
+const procData = [
+  { color:'#4a9fd4', text:'<strong style="color:#4a9fd4">Planificación:</strong> Proceso para alcanzar los objetivos del modo más eficiente siguiendo determinados cursos de acción. Los objetivos van a definir las etapas a cumplir para lograr las metas propuestas.' },
+  { color:'#4adc8c', text:'<strong style="color:#4adc8c">Organización:</strong> Distribución de las responsabilidades, establecimiento y reconocimiento de las relaciones y vínculos necesarios dentro de la estructura.' },
+  { color:'#c080f8', text:'<strong style="color:#c080f8">Dirección:</strong> Contempla la ejecución para que los integrantes de la organización lleven a cabo las tareas establecidas.' },
+  { color:'#ffa060', text:'<strong style="color:#ffa060">Control:</strong> Verificación de las actividades para que se ajusten a lo planificado.' }
+];
+
+let openProc = -1;
+function showProc(i) {
+  const det = document.getElementById('procDetail');
+  if (openProc === i) {
+    openProc = -1;
+    det.style.display = 'none';
+    document.querySelectorAll('.proc-tile').forEach(t => t.style.opacity = '1');
+    return;
+  }
+  openProc = i;
+  det.innerHTML = procData[i].text;
+  det.style.borderLeftColor = procData[i].color;
+  det.style.display = 'block';
+  document.querySelectorAll('.proc-tile').forEach((t,j) => t.style.opacity = j===i ? '1' : '0.6');
+}
+
+function buildDots() {
+  const ind = document.getElementById('sind');
+  ind.innerHTML = '';
+  for (let i = 1; i <= TOTAL; i++) {
+    const d = document.createElement('div');
+    d.className = 'di' + (i === cs ? ' active' : '');
+    d.onclick = (function(n){ return function(){ goTo(n); }; })(i);
+    ind.appendChild(d);
+  }
+  document.getElementById('sctr').textContent = 'Slide ' + cs + ' de ' + TOTAL;
+  document.getElementById('prog').style.width = (cs / TOTAL * 100) + '%';
+  document.getElementById('btnP').disabled = cs === 1;
+  document.getElementById('btnN').disabled = cs === TOTAL;
+}
+
+function goTo(n) {
+  const cur = document.querySelector('.slide[data-s="' + cs + '"]');
+  if (cur) { cur.classList.remove('active'); cur.style.display = 'none'; }
+  cs = n;
+  const nxt = document.querySelector('.slide[data-s="' + cs + '"]');
+  if (nxt) { nxt.style.display = ''; nxt.classList.add('active'); }
+  buildDots();
+}
+
+function goSlide(dir) {
+  const ns = cs + dir;
+  if (ns < 1 || ns > TOTAL) return;
+  const cur = document.querySelector('.slide[data-s="' + cs + '"]');
+  if (cur) {
+    cur.classList.add('exit');
+    setTimeout(() => { cur.classList.remove('exit', 'active'); cur.style.display = 'none'; }, 350);
+  }
+  cs = ns;
+  const nxt = document.querySelector('.slide[data-s="' + cs + '"]');
+  if (nxt) {
+    nxt.style.display = '';
+    nxt.style.transform = dir > 0 ? 'translateX(60px)' : 'translateX(-60px)';
+    nxt.style.opacity = '0';
+    setTimeout(() => { nxt.classList.add('active'); nxt.style.transform = ''; nxt.style.opacity = ''; }, 20);
+  }
+  buildDots();
+}
+
+document.querySelectorAll('.slide:not([data-s="1"])').forEach(s => s.style.display = 'none');
+buildDots();
+</script>
+</body>
+</html>

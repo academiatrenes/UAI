@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Módulo 3 — La Auditoría Interna Gubernamental (Contenido)</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#0a1628;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
+.pres{background:#0f2444;border-radius:14px;overflow:hidden;width:100%;max-width:860px;box-shadow:0 8px 40px rgba(0,0,0,.5)}
+.top-bar{background:#1a3a6b;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #4ab4ff}
+.tbar{font-size:11px;color:#a8c8f0;letter-spacing:.06em;text-transform:uppercase}
+.obadge{background:rgba(255,255,255,.12);color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;margin-left:5px}
+.pbar{height:4px;background:rgba(255,255,255,.1)}
+.pfill{height:100%;background:linear-gradient(90deg,#1a4a7a,#4ab4ff);transition:width .4s}
+.slide-area{height:500px;position:relative;overflow:hidden}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-start;align-items:flex-start;padding:30px 38px;opacity:0;transform:translateX(60px);transition:opacity .35s,transform .35s cubic-bezier(.4,0,.2,1);pointer-events:none;overflow-y:auto}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.exit{opacity:0;transform:translateX(-60px)}
+.slide.cover{background:linear-gradient(135deg,#0f2444 0%,#0a2a4a 55%,#0f2444 100%);align-items:center;justify-content:center;text-align:center}
+.slide.light{background:#f5f8ff}
+.slide.dark{background:#0d1e38}
+.slide.teal{background:#f0f8ff}
+.slide.done{background:#0d1e38;align-items:center;justify-content:center;text-align:center}
+.deco{position:absolute;top:0;right:0;width:200px;height:200px;background:rgba(74,180,255,.08);border-radius:0 0 0 100%;pointer-events:none}
+.deco2{position:absolute;bottom:0;left:0;width:150px;height:150px;background:rgba(74,180,255,.05);border-radius:0 100% 0 0;pointer-events:none}
+.cv-badge{display:inline-block;background:#4ab4ff;color:#0a1a3a;font-size:12px;font-weight:700;padding:7px 22px;border-radius:20px;letter-spacing:.08em;margin-bottom:16px}
+.cv-title{font-size:36px;font-weight:800;color:#fff;line-height:1.15;margin-bottom:10px}
+.cv-title span{color:#4ab4ff}
+.cv-sub{font-size:13px;color:#a8c8f0;font-style:italic}
+.sh2{font-size:16px;font-weight:700;color:#1a3a6b;margin-bottom:14px;border-left:4px solid #4ab4ff;padding-left:12px;width:100%}
+.sh2w{font-size:16px;font-weight:700;color:#4ab4ff;margin-bottom:14px}
+.mb{background:#1a3a6b;border-radius:8px;padding:13px 17px;width:100%;margin-bottom:12px}
+.mb p{font-size:13.5px;color:#c8e0f8;line-height:1.7}
+.mb strong{color:#4ab4ff}
+.tc{display:grid;grid-template-columns:1fr 1fr;gap:11px;width:100%}
+.ib{background:#fff;border:1px solid #d0e4f8;border-radius:8px;padding:12px 14px}
+.ib h4{font-size:11.5px;font-weight:700;color:#1a4a7a;text-transform:uppercase;letter-spacing:.04em;margin-bottom:7px}
+.ib ul{list-style:none}
+.ib ul li{font-size:12.5px;color:#334;padding:2px 0 2px 13px;position:relative;line-height:1.45}
+.ib ul li::before{content:'▸';position:absolute;left:0;color:#4ab4ff;font-size:9px;top:4px}
+.ib p{font-size:12.5px;color:#334;line-height:1.6}
+/* banner */
+.banner{border-radius:8px;padding:11px 15px;font-size:13px;line-height:1.65;width:100%;margin-top:10px}
+.banner.blue{background:#e8f4ff;color:#1a3a6b;border-left:3px solid #4ab4ff}
+.banner.dark{background:rgba(255,255,255,.07);color:#c8e0f8;border-left:3px solid #4ab4ff}
+/* obj items */
+.oitem{display:flex;align-items:flex-start;gap:11px;padding:8px 13px;background:#fff;border-radius:8px;margin-bottom:6px;border-left:3px solid #1a4a7a;width:100%}
+.onum{background:#1a4a7a;color:#fff;font-size:11px;font-weight:800;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.otxt{font-size:12.5px;color:#223;line-height:1.5}
+/* 3Es */
+.e3grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;width:100%;margin-top:4px}
+.e3card{border-radius:9px;padding:14px 13px;text-align:left}
+.e3card.ef{background:#1a3a6b;border:2px solid #4ab4ff}
+.e3card.ec{background:#3a1a00;border:2px solid #f0a040}
+.e3card.ee{background:#0a3a1a;border:2px solid #4add8a}
+.e3card .et{font-size:13px;font-weight:800;margin-bottom:7px}
+.e3card.ef .et{color:#4ab4ff}
+.e3card.ec .et{color:#f0a040}
+.e3card.ee .et{color:#4add8a}
+.e3card .ed{font-size:11.5px;line-height:1.55;color:rgba(255,255,255,.85)}
+/* conditions */
+.condg{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;margin-top:10px}
+.cond{display:flex;align-items:center;gap:9px;background:#fff;border-radius:8px;padding:10px 13px;border-left:3px solid #1a4a7a}
+.cnumb{background:#1a4a7a;color:#fff;font-size:11px;font-weight:800;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ctxt{font-size:12.5px;color:#223;font-weight:600}
+/* ases/cons tiles */
+.ac-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;width:100%}
+.ac-tile{border-radius:9px;padding:14px 14px;cursor:pointer;transition:all .2s;border:2px solid transparent}
+.ac-tile:hover{transform:translateY(-2px)}
+.ac-tile.aseg{background:#1a3a6b;border-color:#4ab4ff}
+.ac-tile.cons{background:#1a4a2a;border-color:#4adc8c}
+.ac-tile .at-icon{font-size:28px;margin-bottom:8px}
+.ac-tile .at-title{font-size:13px;font-weight:800;margin-bottom:4px}
+.ac-tile.aseg .at-title{color:#4ab4ff}
+.ac-tile.cons .at-title{color:#4adc8c}
+.ac-tile .at-sub{font-size:11px;color:rgba(255,255,255,.7);line-height:1.4}
+.ac-det{background:rgba(255,255,255,.07);border-radius:8px;padding:13px 16px;font-size:13px;color:#e8f4ff;line-height:1.65;margin-top:10px;width:100%;border-left:3px solid #4ab4ff;display:none}
+.ac-det.vis{display:block}
+/* norms */
+.norm-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;width:100%;margin-top:10px}
+.norm-tile{background:#fff;border-radius:8px;padding:11px 12px;border-top:3px solid #1a4a7a;cursor:pointer;transition:all .2s}
+.norm-tile:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(74,180,255,.15)}
+.norm-tile.sel{background:#e8f4ff;border-top-color:#4ab4ff}
+.norm-tile .nt-num{background:#1a4a7a;color:#fff;font-size:10px;font-weight:800;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:6px}
+.norm-tile.sel .nt-num{background:#4ab4ff}
+.norm-tile .nt-txt{font-size:11.5px;color:#1a3a6b;font-weight:600;line-height:1.4}
+.norm-det{background:#1a3a6b;border-radius:8px;padding:12px 15px;margin-top:10px;width:100%;font-size:13px;color:#c8e0f8;line-height:1.65;border-left:3px solid #f0c040;display:none}
+.norm-det.vis{display:block}
+/* key concept */
+.key-concept{background:linear-gradient(135deg,#1a3a6b,#2563a8);border-radius:9px;padding:14px 18px;width:100%;border-left:4px solid #f0c040;box-shadow:0 3px 14px rgba(240,192,64,.15)}
+.key-concept .kc-label{font-size:11px;font-weight:800;color:#f0c040;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+.key-concept .kc-text{font-size:13.5px;color:#fff;line-height:1.7}
+/* controls */
+.controls{background:#1a3a6b;border-top:1px solid rgba(255,255,255,.09);padding:12px 20px;display:flex;align-items:center;justify-content:space-between}
+.cbtn{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.16);color:#fff;padding:7px 18px;border-radius:7px;cursor:pointer;font-size:12px;transition:all .2s}
+.cbtn:hover:not(:disabled){background:rgba(255,255,255,.2)}
+.cbtn:disabled{opacity:.3;cursor:not-allowed}
+.sind{display:flex;gap:5px;justify-content:center;align-items:center}
+.di{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.2);cursor:pointer;transition:all .2s}
+.di.active{background:#4ab4ff;transform:scale(1.3)}
+.sctr{font-size:11px;color:#a8c8f0;min-width:90px;text-align:right}
+</style>
+</head>
+<body>
+<div class="pres">
+  <div class="top-bar">
+    <div class="tbar">La Importancia del Control Interno en la APN</div>
+    <div><span class="obadge">SOFSA</span><span class="obadge">UAI</span></div>
+  </div>
+  <div class="pbar"><div class="pfill" id="prog" style="width:14%"></div></div>
+
+  <div class="slide-area" id="sa">
+
+    <!-- SLIDE 1: Portada -->
+    <div class="slide cover active" data-s="1">
+      <div class="deco"></div><div class="deco2"></div>
+      <div class="cv-badge">MÓDULO 3</div>
+      <div class="cv-title">La <span>Auditoría Interna</span><br>Gubernamental</div>
+      <div class="cv-sub">Definición · Objetivos · Las tres E · Normas de ejercicio</div>
+    </div>
+
+    <!-- SLIDE 2: Qué es la auditoría interna -->
+    <div class="slide light" data-s="2">
+      <div class="sh2">¿Qué es la auditoría interna?</div>
+      <div class="mb"><p>Actividad <strong>independiente y objetiva</strong> de aseguramiento y consulta, concebida para agregar valor y mejorar las operaciones de una organización. Ayuda a cumplir sus objetivos aportando un enfoque sistemático y disciplinado para evaluar y mejorar la eficacia de los procesos de gestión de riesgos, control y gobierno.</p></div>
+      <div style="font-size:13px;color:#557;margin-bottom:9px">La auditoría interna se manifiesta en dos modalidades:</div>
+      <div class="ac-grid">
+        <div class="ac-tile aseg" style="cursor:default">
+          <div class="at-icon">🔎</div>
+          <div class="at-title">Aseguramiento</div>
+          <div class="at-sub">Examen objetivo de evidencias con el propósito de proveer una evaluación independiente de los procesos de gestión de riesgos, control y gobierno. Por ejemplo: trabajos financieros, de desempeño, de cumplimiento, de seguridad de sistemas y de diligencia debida.</div>
+        </div>
+        <div class="ac-tile cons" style="cursor:default">
+          <div class="at-icon">💡</div>
+          <div class="at-title">Consultoría</div>
+          <div class="at-sub">Actividades de asesoramiento y servicios relacionados, cuya naturaleza y alcance estén acordados con el cliente, dirigidos a añadir valor y mejorar los procesos de gobierno, gestión de riesgos y control, sin que el auditor asuma responsabilidades de gestión. Ejemplos: consejo, asesoramiento, facilitación y formación.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3: Objetivos de la auditoría interna -->
+    <div class="slide light" data-s="3" style="padding:24px 32px">
+      <div class="sh2">Objetivos de la auditoría interna</div>
+      <div class="oitem"><div class="onum">1</div><div class="otxt">Emitir opinión sobre la <strong style="color:#1a4a7a">eficacia del sistema de control interno</strong> imperante en el organismo.</div></div>
+      <div class="oitem"><div class="onum">2</div><div class="otxt">Concluir sobre el logro de los objetivos establecidos y el <strong style="color:#1a4a7a">cumplimiento de la normativa</strong>.</div></div>
+      <div class="oitem"><div class="onum">3</div><div class="otxt">Informar sobre el resultado de la gestión respecto a los objetivos de <strong style="color:#1a4a7a">economía, eficiencia y eficacia</strong>.</div></div>
+      <div class="oitem"><div class="onum">4</div><div class="otxt">Identificar causas de fallas y efectuar <strong style="color:#1a4a7a">recomendaciones</strong> que promuevan el cumplimiento de procedimientos y prácticas aceptables.</div></div>
+    </div>
+
+    <!-- SLIDE 4: Las tres E -->
+    <div class="slide dark" data-s="4">
+      <div class="sh2w">Evaluación de la gestión: las tres E</div>
+      <div style="font-size:13px;color:#a8c8f0;margin-bottom:10px">La auditoría interna evalúa el desempeño organizacional en función de tres dimensiones complementarias:</div>
+      <div class="e3grid">
+        <div class="e3card ef">
+          <div class="et">Eficacia</div>
+          <div class="ed">Medida en que se alcanzaron los objetivos y si se produjeron bienes o servicios en la cantidad, calidad y oportunidad adecuada, conforme a los objetivos preestablecidos.</div>
+        </div>
+        <div class="e3card ec">
+          <div class="et">Economía</div>
+          <div class="ed">Evaluación de la disposición de los recursos necesarios para el cumplimiento de los objetivos, en cantidad, calidad y oportunidad, al menor costo posible.</div>
+        </div>
+        <div class="e3card ee">
+          <div class="et">Eficiencia</div>
+          <div class="ed">Análisis sobre el grado en que se logran los resultados previstos y si se optimizaron los recursos para la producción de bienes o servicios.</div>
+        </div>
+      </div>
+      <div class="banner dark" style="margin-top:12px">El enfoque interdisciplinario es clave: la diversidad de objetivos y tipos de organizaciones requiere grupos de trabajo con distintas competencias profesionales.</div>
+    </div>
+
+    <!-- SLIDE 5: Auditoría interna en el Sector Público Nacional -->
+    <div class="slide light" data-s="5" style="padding:24px 32px">
+      <div class="sh2">La auditoría interna en el Sector Público Nacional</div>
+      <div class="tc" style="margin-bottom:10px">
+        <div class="ib" style="border-top:3px solid #4ab4ff">
+          <h4>El auditor interno debe:</h4>
+          <ul>
+            <li>Examinar en forma independiente, objetiva, sistemática e integral el funcionamiento del sistema de control interno</li>
+            <li>Informar sobre la eficacia y eficiencia de las operaciones y el cumplimiento de responsabilidades financieras, legales y de gestión</li>
+            <li>Brindar asesoramiento en aspectos de su competencia</li>
+            <li>Ser un colaborador directo de las autoridades, contribuyendo al cumplimiento de la misión organizacional</li>
+            <li>Orientarse a mejorar el desempeño, la integridad y la transparencia</li>
+          </ul>
+        </div>
+        <div class="ib" style="border-top:3px solid #1a4a7a">
+          <h4>Responsabilidades (Art. 102, Ley n.° 24156)</h4>
+          <ul>
+            <li>La auditoría interna es un <strong>servicio a toda la organización</strong></li>
+            <li>Consiste en un examen posterior de las actividades financieras y administrativas</li>
+            <li>Realizada por auditores integrantes de las UAI</li>
+            <li>Sus funciones deben mantenerse desligadas de las operaciones sujetas a examen</li>
+          </ul>
+
+        </div>
+      </div>
+      <div class="key-concept">
+        <div class="kc-label">⭐ Concepto clave</div>
+        <div class="kc-text">La auditoría interna gubernamental es un <strong style="color:#4ab4ff">servicio a toda la organización</strong> que contribuye a la alineación de los procesos con la misión y visión institucional, agregando valor y colaborando con el buen gobierno.</div>
+      </div>
+    </div>
+
+    <!-- SLIDE 6: Normas de ejercicio -->
+    <div class="slide light" data-s="6" style="padding:24px 32px">
+      <div class="sh2">Condiciones para el ejercicio — Res. SIGEN n.° 152/02</div>
+      <div style="font-size:13px;color:#557;margin-bottom:4px">Las Normas de Auditoría Interna Gubernamental presentan y definen en su estructura las condiciones para el ejercicio de la auditoría interna. Hacé clic en cada una para ver su descripción:</div>
+      <div class="norm-grid">
+        <div class="norm-tile" id="nt0" onclick="showNorm(0)"><div class="nt-num">1</div><div class="nt-txt">Independencia y objetividad</div></div>
+        <div class="norm-tile" id="nt1" onclick="showNorm(1)"><div class="nt-num">2</div><div class="nt-txt">Normas éticas y de conducta</div></div>
+        <div class="norm-tile" id="nt2" onclick="showNorm(2)"><div class="nt-num">3</div><div class="nt-txt">Conocimiento, pericia y experiencia</div></div>
+        <div class="norm-tile" id="nt3" onclick="showNorm(3)"><div class="nt-num">4</div><div class="nt-txt">Capacitación continua</div></div>
+        <div class="norm-tile" id="nt4" onclick="showNorm(4)"><div class="nt-num">5</div><div class="nt-txt">Debido cuidado profesional</div></div>
+        <div class="norm-tile" id="nt5" onclick="showNorm(5)"><div class="nt-num">6</div><div class="nt-txt">Secreto profesional</div></div>
+      </div>
+      <div class="norm-det" id="normDet"></div>
+      <div class="banner blue" style="margin-top:10px">Las normas son aplicables a: (1) las auditorías que realice la SIGEN, (2) las que lleven a cabo las UAI, y (3) las auditorías que realicen firmas privadas contratadas conforme a normas vigentes.</div>
+    </div>
+
+    <!-- SLIDE 7: Cierre -->
+    <div class="slide done" data-s="7">
+      <div style="font-size:42px;margin-bottom:14px">📥</div>
+      <div style="font-size:22px;font-weight:700;color:#4ab4ff;margin-bottom:12px">¡Contenido completado!</div>
+      <div style="font-size:14px;color:#a8c8f0;max-width:440px;line-height:1.75;margin-bottom:22px;text-align:center">
+        Ya recorriste qué es la auditoría interna, sus objetivos, las tres E y las condiciones para su ejercicio.<br><br>
+        <strong style="color:#fff">Antes de continuar con la evaluación,<br>descargá el material de referencia.</strong>
+      </div>
+      <a href="#" style="background:#4ab4ff;color:#0a1a3a;font-weight:700;font-size:13px;padding:10px 28px;border-radius:8px;text-decoration:none;display:inline-block">📄 Descargar material</a>
+    </div>
+
+  </div><!-- slide-area -->
+
+  <div class="controls">
+    <button class="cbtn" id="btnP" onclick="goSlide(-1)" disabled>← Anterior</button>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+      <div class="sind" id="sind"></div>
+      <div class="sctr" id="sctr">Slide 1 de 7</div>
+    </div>
+    <button class="cbtn" id="btnN" onclick="goSlide(1)">Siguiente →</button>
+  </div>
+</div>
+
+<script>
+const TOTAL = 7;
+let cs = 1;
+
+const acData = {
+  aseg: '<strong style="color:#4ab4ff">Aseguramiento:</strong> Examen objetivo de evidencias con el propósito de proveer una evaluación independiente de los procesos de gestión de riesgos, control y gobierno de una organización. Por ejemplo: trabajos financieros, de desempeño, de cumplimiento, de seguridad de sistemas y de diligencia debida.',
+  cons: '<strong style="color:#4adc8c">Consultoría:</strong> Actividades de asesoramiento y servicios relacionados, proporcionadas a los clientes, cuya naturaleza y alcance estén acordados con los mismos y estén dirigidos a añadir valor y a mejorar los procesos de gobierno, gestión de riesgos y control de una organización, sin que el auditor interno asuma responsabilidades de gestión. Ejemplos: consejo, asesoramiento, facilitación y formación.'
+};
+let openAC = null;
+
+function showAC(key) {
+  const det = document.getElementById('acDet');
+  if (openAC === key) {
+    openAC = null;
+    det.classList.remove('vis');
+    return;
+  }
+  openAC = key;
+  det.style.borderLeftColor = key === 'aseg' ? '#4ab4ff' : '#4adc8c';
+  det.innerHTML = acData[key];
+  det.classList.add('vis');
+}
+
+const normData = [
+  'El auditor interno debe mantener una actitud imparcial y objetiva, libre de conflictos de interés, evitando toda relación que pueda comprometer o aparentar comprometer su objetividad profesional.',
+  'El auditor interno debe cumplir y promover los principios éticos y estándares de conducta establecidos por la organización y los organismos profesionales pertinentes.',
+  'El auditor interno debe poseer los conocimientos, las aptitudes y las competencias necesarias para cumplir con sus responsabilidades individuales. El equipo de auditoría debe poseer colectivamente los conocimientos, las aptitudes y las competencias pertinentes.',
+  'El auditor interno debe mejorar sus conocimientos, aptitudes y competencias mediante la formación profesional continua.',
+  'El auditor interno debe aplicar el cuidado y la pericia que se esperan de un auditor interno razonablemente prudente y competente. No implica infalibilidad.',
+  'El auditor interno debe respetar el valor y la propiedad de la información que recibe y no revelar dicha información sin la debida autorización, a menos que exista una obligación legal o profesional para hacerlo.'
+];
+let openNorm = -1;
+
+function showNorm(i) {
+  const det = document.getElementById('normDet');
+  document.querySelectorAll('.norm-tile').forEach((t,j) => t.classList.toggle('sel', j===i && openNorm !== i));
+  if (openNorm === i) {
+    openNorm = -1;
+    det.classList.remove('vis');
+    return;
+  }
+  openNorm = i;
+  det.textContent = normData[i];
+  det.classList.add('vis');
+}
+
+function buildDots() {
+  const ind = document.getElementById('sind');
+  ind.innerHTML = '';
+  for (let i = 1; i <= TOTAL; i++) {
+    const d = document.createElement('div');
+    d.className = 'di' + (i === cs ? ' active' : '');
+    d.onclick = (function(n){ return function(){ goTo(n); }; })(i);
+    ind.appendChild(d);
+  }
+  document.getElementById('sctr').textContent = 'Slide ' + cs + ' de ' + TOTAL;
+  document.getElementById('prog').style.width = (cs / TOTAL * 100) + '%';
+  document.getElementById('btnP').disabled = cs === 1;
+  document.getElementById('btnN').disabled = cs === TOTAL;
+}
+
+function goTo(n) {
+  const cur = document.querySelector('.slide[data-s="' + cs + '"]');
+  if (cur) { cur.classList.remove('active'); cur.style.display = 'none'; }
+  cs = n;
+  const nxt = document.querySelector('.slide[data-s="' + cs + '"]');
+  if (nxt) { nxt.style.display = ''; nxt.classList.add('active'); }
+  buildDots();
+}
+
+function goSlide(dir) {
+  const ns = cs + dir;
+  if (ns < 1 || ns > TOTAL) return;
+  const cur = document.querySelector('.slide[data-s="' + cs + '"]');
+  if (cur) {
+    cur.classList.add('exit');
+    setTimeout(() => { cur.classList.remove('exit', 'active'); cur.style.display = 'none'; }, 350);
+  }
+  cs = ns;
+  const nxt = document.querySelector('.slide[data-s="' + cs + '"]');
+  if (nxt) {
+    nxt.style.display = '';
+    nxt.style.transform = dir > 0 ? 'translateX(60px)' : 'translateX(-60px)';
+    nxt.style.opacity = '0';
+    setTimeout(() => { nxt.classList.add('active'); nxt.style.transform = ''; nxt.style.opacity = ''; }, 20);
+  }
+  buildDots();
+}
+
+document.querySelectorAll('.slide:not([data-s="1"])').forEach(s => s.style.display = 'none');
+buildDots();
+</script>
+</body>
+</html>

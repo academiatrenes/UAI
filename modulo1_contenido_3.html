@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Módulo 1 — Organismos y Estructuras de Control (Contenido)</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#0a1628;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
+.pres{background:#0f2444;border-radius:14px;overflow:hidden;width:100%;max-width:860px;box-shadow:0 8px 40px rgba(0,0,0,.5)}
+.top-bar{background:#1a3a6b;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #f0c040}
+.tbar{font-size:11px;color:#a8c8f0;letter-spacing:.06em;text-transform:uppercase}
+.obadge{background:rgba(255,255,255,.12);color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;margin-left:5px}
+.pbar{height:4px;background:rgba(255,255,255,.1)}
+.pfill{height:100%;background:linear-gradient(90deg,#2563a8,#f0c040);transition:width .4s}
+.slide-area{height:500px;position:relative;overflow:hidden}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-start;align-items:flex-start;padding:30px 38px;opacity:0;transform:translateX(60px);transition:opacity .35s,transform .35s cubic-bezier(.4,0,.2,1);pointer-events:none;overflow-y:auto}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.exit{opacity:0;transform:translateX(-60px)}
+.slide.cover{background:linear-gradient(135deg,#0f2444 0%,#1a4a8a 55%,#1a3a6b 100%);align-items:center;justify-content:center;text-align:center}
+.slide.light{background:#f5f8ff}
+.slide.dark{background:#0d1e38}
+.slide.done{background:#0d1e38;align-items:center;justify-content:center;text-align:center}
+.deco{position:absolute;top:0;right:0;width:200px;height:200px;background:rgba(74,159,212,.1);border-radius:0 0 0 100%;pointer-events:none}
+.deco2{position:absolute;bottom:0;left:0;width:150px;height:150px;background:rgba(240,192,64,.06);border-radius:0 100% 0 0;pointer-events:none}
+.cv-badge{display:inline-block;background:#f0c040;color:#1a3a6b;font-size:12px;font-weight:700;padding:7px 22px;border-radius:20px;letter-spacing:.08em;margin-bottom:16px}
+.cv-title{font-size:36px;font-weight:800;color:#fff;line-height:1.15;margin-bottom:10px}
+.cv-title span{color:#f0c040}
+.cv-sub{font-size:13px;color:#a8c8f0;font-style:italic}
+.sh2{font-size:16px;font-weight:700;color:#1a3a6b;margin-bottom:14px;border-left:4px solid #f0c040;padding-left:12px;width:100%}
+.sh2w{font-size:16px;font-weight:700;color:#f0c040;margin-bottom:12px}
+.mb{background:#1a3a6b;border-radius:8px;padding:12px 16px;width:100%;margin-bottom:10px}
+.mb p{font-size:13.5px;color:#c8e0f8;line-height:1.7}
+.mb strong{color:#f0c040}
+
+/* ===== ORG GRID ===== */
+.ogrid{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;width:100%;margin-bottom:10px}
+.oc{background:#fff;border:1.5px solid #c8ddf0;border-radius:8px;padding:13px 5px;text-align:center;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center}
+.oc:hover,.oc.sel{background:#2563a8;border-color:#2563a8;transform:translateY(-2px)}
+.oc:hover .ocs,.oc.sel .ocs{color:#fff}
+.ocs{font-size:11px;font-weight:800;color:#2563a8;letter-spacing:.04em}
+
+/* org detail panel */
+.org-panel{width:100%;border-radius:9px;overflow:hidden;display:none;animation:fadeIn .25s ease}
+.org-panel.vis{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* simple text panel (for brief orgs) */
+.org-simple{background:#e8f4ff;border-left:4px solid #2563a8;border-radius:0 8px 8px 0;padding:11px 14px;font-size:13px;color:#1a3a6b;line-height:1.6}
+.org-simple strong{color:#2563a8}
+
+/* rich mosaic panel (for SIGEN, AGN, UIF, AAIP, OA) */
+.org-rich{display:grid;gap:8px}
+.org-rich.two{grid-template-columns:1fr 1fr}
+.org-rich.three{grid-template-columns:1fr 1fr 1fr}
+.org-card{background:#fff;border-radius:8px;padding:11px 13px;border-top:3px solid #2563a8}
+.org-card.green{border-top-color:#1a7a4a}
+.org-card.amber{border-top-color:#b89020}
+.org-card.purple{border-top-color:#6a3aad}
+.org-card h4{font-size:10.5px;font-weight:700;color:#2563a8;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px}
+.org-card.green h4{color:#1a7a4a}
+.org-card.amber h4{color:#b89020}
+.org-card.purple h4{color:#6a3aad}
+.org-card ul{list-style:none}
+.org-card ul li{font-size:11.5px;color:#334;padding:2px 0 2px 12px;position:relative;line-height:1.4}
+.org-card ul li::before{content:'▸';position:absolute;left:0;color:#f0c040;font-size:9px;top:3px}
+.org-card p{font-size:11.5px;color:#334;line-height:1.55}
+.org-header-bar{background:#1a3a6b;padding:9px 14px;display:flex;align-items:center;gap:10px}
+.org-header-bar .ohicon{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:#fff;flex-shrink:0}
+.org-header-bar .ohname{font-size:13px;font-weight:700;color:#fff}
+.org-header-bar .ohdep{font-size:10px;color:#a8c8f0}
+
+/* ===== SINUOUS TIMELINE ===== */
+.tl-wrap{width:100%;position:relative}
+#tl-svg{width:100%;display:block;overflow:visible}
+.tl-detail-box{background:rgba(255,255,255,.07);border-radius:8px;padding:10px 15px;font-size:13px;color:#c8e0f8;line-height:1.6;border-left:3px solid #f0c040;width:100%;position:relative;min-height:46px;margin-top:8px}
+.tl-close{position:absolute;top:7px;right:10px;background:rgba(255,255,255,.15);border:none;color:#fff;font-size:12px;font-weight:700;width:20px;height:20px;border-radius:50%;cursor:pointer;display:none;align-items:center;justify-content:center}
+.tl-close.show{display:flex}
+.tl-hint{font-size:12px;color:#6a9ac0;font-style:italic;margin-top:5px;text-align:center}
+
+/* controls */
+.controls{background:#1a3a6b;border-top:1px solid rgba(255,255,255,.09);padding:12px 20px;display:flex;align-items:center;justify-content:space-between}
+.cbtn{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.16);color:#fff;padding:7px 18px;border-radius:7px;cursor:pointer;font-size:12px;transition:all .2s}
+.cbtn:hover:not(:disabled){background:rgba(255,255,255,.2)}
+.cbtn:disabled{opacity:.3;cursor:not-allowed}
+.sind{display:flex;gap:5px;justify-content:center;align-items:center}
+.di{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.2);cursor:pointer;transition:all .2s}
+.di.active{background:#f0c040;transform:scale(1.3)}
+.sctr{font-size:11px;color:#a8c8f0;min-width:90px;text-align:right}
+</style>
+</head>
+<body>
+<div class="pres">
+  <div class="top-bar">
+    <div class="tbar">La Importancia del Control Interno en la APN</div>
+    <div><span class="obadge">SOFSA</span><span class="obadge">UAI</span></div>
+  </div>
+  <div class="pbar"><div class="pfill" id="prog" style="width:20%"></div></div>
+
+  <div class="slide-area" id="sa">
+
+    <!-- SLIDE 1: Portada -->
+    <div class="slide cover active" data-s="1">
+      <div class="deco"></div><div class="deco2"></div>
+      <div class="cv-badge">MÓDULO 1</div>
+      <div class="cv-title">La importancia del<br><span>Control Interno</span><br>en la APN</div>
+      <div class="cv-sub">Organismos y estructuras de control</div>
+    </div>
+
+    <!-- SLIDE 2: Intro -->
+    <div class="slide light" data-s="2">
+      <div class="sh2">¿Por qué importa el control interno?</div>
+      <div class="mb"><p>El <strong>control interno gubernamental</strong> garantiza que los recursos del Estado se utilicen eficaz y transparentemente, promoviendo la participación ciudadana y fortaleciendo los procesos democráticos.</p></div>
+      <div style="font-size:13px;color:#334;font-weight:600;margin-bottom:10px">Recorrido del módulo:</div>
+      <div style="display:flex;width:100%">
+        <div style="flex:1;text-align:center;padding:14px 6px;background:#e8f0fb;border-radius:8px 0 0 8px"><div style="font-size:26px">🏛️</div><div style="font-size:12px;color:#1a3a6b;font-weight:600;margin-top:5px">Organismos y estructuras</div></div>
+        <div style="flex:1;text-align:center;padding:14px 6px;background:#dae8fb"><div style="font-size:26px">⚖️</div><div style="font-size:12px;color:#1a3a6b;font-weight:600;margin-top:5px">Control gubernamental</div></div>
+        <div style="flex:1;text-align:center;padding:14px 6px;background:#e8f0fb;border-radius:0 8px 8px 0"><div style="font-size:26px">🔍</div><div style="font-size:12px;color:#1a3a6b;font-weight:600;margin-top:5px">Quiénes y cómo controlan</div></div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3: Organismos con panel detalle -->
+    <div class="slide light" data-s="3" style="padding:22px 30px">
+      <div class="sh2">Organismos y estructuras de control de la gestión</div>
+      <div style="font-size:13px;color:#557;margin-bottom:8px">Hacé clic en cada organismo para conocerlo:</div>
+      <div class="ogrid">
+        <div class="oc" id="btn-sigen"    onclick="showOrg('sigen')"><div class="ocs">SIGEN</div></div>
+        <div class="oc" id="btn-agn"      onclick="showOrg('agn')"><div class="ocs">AGN</div></div>
+        <div class="oc" id="btn-cpmrc"    onclick="showOrg('cpmrc')"><div class="ocs">CPMRC</div></div>
+        <div class="oc" id="btn-uif"      onclick="showOrg('uif')"><div class="ocs">UIF</div></div>
+        <div class="oc" id="btn-defensor" onclick="showOrg('defensor')"><div class="ocs">DPN</div></div>
+        <div class="oc" id="btn-aaip"     onclick="showOrg('aaip')"><div class="ocs">AAIP</div></div>
+        <div class="oc" id="btn-oa"       onclick="showOrg('oa')"><div class="ocs">OA</div></div>
+        <div class="oc" id="btn-pia"      onclick="showOrg('pia')"><div class="ocs">PIA</div></div>
+        <div class="oc" id="btn-rfcp"     onclick="showOrg('rfcp')"><div class="ocs">RFCP</div></div>
+        <div class="oc" id="btn-entes"    onclick="showOrg('entes')"><div class="ocs">ENT</div></div>
+      </div>
+      <div class="org-panel" id="orgPanel"></div>
+    </div>
+
+    <!-- SLIDE 4: Línea temporal sinuosa -->
+    <div class="slide dark" data-s="4" style="padding:20px 28px">
+      <div class="sh2w">Línea temporal del control gubernamental</div>
+      <div class="tl-wrap">
+        <svg id="tl-svg" height="200" viewBox="0 0 780 200" preserveAspectRatio="xMidYMid meet"></svg>
+      </div>
+      <div class="tl-detail-box" id="tlDetail">
+        <span id="tlText">👆 Hacé clic sobre el primer hito para comenzar el recorrido histórico.</span>
+        <button class="tl-close" id="tlClose" onclick="closeHito()">✕</button>
+      </div>
+      <div class="tl-hint" id="tlHint">Hito 1 de 8 — hacé clic sobre el punto resaltado</div>
+    </div>
+
+    <!-- SLIDE 5: Cierre -->
+    <div class="slide done" data-s="5">
+      <div style="font-size:42px;margin-bottom:14px">📥</div>
+      <div style="font-size:22px;font-weight:700;color:#f0c040;margin-bottom:12px">¡Contenido completado!</div>
+      <div style="font-size:14px;color:#a8c8f0;max-width:440px;line-height:1.75;margin-bottom:22px;text-align:center">
+        Ya recorriste todos los organismos y estructuras de control de la APN.<br><br>
+        <strong style="color:#fff">Antes de continuar con la evaluación,<br>descargá el material de referencia.</strong>
+      </div>
+      <a href="#" style="background:#f0c040;color:#1a3a6b;font-weight:700;font-size:13px;padding:10px 28px;border-radius:8px;text-decoration:none;display:inline-block">📄 Descargar material</a>
+    </div>
+
+  </div><!-- slide-area -->
+
+  <div class="controls">
+    <button class="cbtn" id="btnP" onclick="goSlide(-1)" disabled>← Anterior</button>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+      <div class="sind" id="sind"></div>
+      <div class="sctr" id="sctr">Slide 1 de 5</div>
+    </div>
+    <button class="cbtn" id="btnN" onclick="goSlide(1)">Siguiente →</button>
+  </div>
+</div>
+
+<script>
+const TOTAL = 5;
+let cs = 1;
+let currentOrg = null;
+
+// ===== ORG DATA =====
+const orgPanels = {
+  sigen: {
+    type: 'rich',
+    header: { label:'SIGEN', color:'#2563a8', name:'Sindicatura General de la Nación', dep:'Órgano rector del sistema de control interno — Poder Ejecutivo Nacional' },
+    cards: [
+      { title:'Misión', cls:'', text:'Coordinar actividades para que la gestión del sector público nacional alcance los objetivos de gobierno mediante un empleo adecuado de los recursos en el marco legal vigente.' },
+      { title:'Funciones principales', cls:'green', list:['Dictar y aplicar normas de control interno','Emitir normas de auditoría interna','Realizar auditorías financieras y de gestión','Supervisar el sistema de control interno','Aprobar planes anuales de las UAI'] },
+      { title:'Informa a', cls:'amber', list:['Presidente de la Nación','Auditoría General de la Nación','La opinión pública'] }
+    ]
+  },
+  agn: {
+    type: 'rich',
+    header: { label:'AGN', color:'#c05a00', name:'Auditoría General de la Nación', dep:'Órgano rector del sistema de control externo — Congreso Nacional' },
+    cards: [
+      { title:'Misión', cls:'', text:'Mejorar la eficiencia, eficacia y efectividad del Estado en beneficio de la sociedad.' },
+      { title:'Funciones principales', cls:'green', list:['Fiscalizar el cumplimiento de la normativa en la utilización de recursos del Estado','Auditorías financieras, de legalidad y de gestión','Audita programas con financiamiento internacional','Examina y emite dictámenes sobre estados contables','Controla la aplicación de los recursos del crédito público'] }
+    ]
+  },
+  cpmrc: {
+    type: 'simple',
+    text: '<strong>Comisión Parlamentaria Mixta Revisora de Cuentas (CPMRC):</strong> Órgano parlamentario que aprueba el programa anual de control externo a desarrollar por la AGN. Puede encomendarle la realización de estudios, investigaciones o dictámenes especiales sobre materias de su competencia, y requerirle toda la información que estime oportuna sobre las actividades que realiza.'
+  },
+  uif: {
+    type: 'rich',
+    header: { label:'UIF', color:'#6a3aad', name:'Unidad de Información Financiera', dep:'Organismo con autonomía y autarquía financiera' },
+    cards: [
+      { title:'Misión', cls:'purple', text:'Prevenir e impedir el lavado de activos, la financiación del terrorismo y los Delitos Económico-Financieros complejos (DEC), mediante el análisis, tratamiento y transmisión de información.' },
+      { title:'Puede solicitar documentación a', cls:'', list:['Organismos públicos nacionales, provinciales o municipales','Personas físicas o jurídicas, públicas o privadas, obligadas por ley a proporcionarla'] }
+    ]
+  },
+  defensor: {
+    type: 'simple',
+    text: '<strong>Defensoría del Pueblo de la Nación (DPN):</strong> Institución de la Nación que actúa con plena independencia y autonomía funcional. Su misión es defender y proteger los derechos, garantías e intereses tutelados en la Constitución Nacional y las leyes, ante hechos, actos u omisiones de la Administración, y controlar el ejercicio de las funciones administrativas públicas.'
+  },
+  aaip: {
+    type: 'rich',
+    header: { label:'AAIP', color:'#1a7a4a', name:'Agencia de Acceso a la Información Pública', dep:'Organismo autárquico' },
+    cards: [
+      { title:'Misión', cls:'green', text:'Garantizar el efectivo ejercicio del derecho de acceso a la información pública y promover la transparencia activa en toda la Administración Pública.' },
+      { title:'Principales funciones', cls:'', list:['Velar por el cumplimiento del derecho de acceso a la información pública','Garantizar la protección de los datos personales','Gestionar el Registro Nacional "No Llame"','Promover medidas de transparencia activa'] }
+    ]
+  },
+  oa: {
+    type: 'rich',
+    header: { label:'OA', color:'#c05a00', name:'Oficina Anticorrupción', dep:'Organismo desconcentrado — Presidencia de la Nación' },
+    cards: [
+      { title:'Misión', cls:'', text:'Actuar en la prevención e investigación de la corrupción y formular políticas de transparencia en el ámbito de la Administración Pública Nacional centralizada y descentralizada.' },
+      { title:'Principales funciones', cls:'green', list:['Recibe denuncias de particulares y agentes públicos','Investiga conductas de corrupción en la APN','Formula y propone políticas de transparencia','Elabora programas de prevención de la corrupción'] }
+    ]
+  },
+  pia: {
+    type: 'simple',
+    text: '<strong>Procuraduría de Investigaciones Administrativas (PIA):</strong> Integra la Procuración General de la Nación como órgano especializado en la investigación de hechos de corrupción e irregularidades administrativas cometidas por agentes de la Administración Nacional. Realiza investigaciones preliminares, impulsa e interviene en sumarios administrativos y actuaciones judiciales. No interviene en casos del Poder Legislativo, Judicial ni en instancias provinciales o municipales.'
+  },
+  rfcp: {
+    type: 'simple',
+    text: '<strong>Red Federal de Control Público (RFCP):</strong> Integra y complementa las estructuras estatales de fiscalización y auditoría, con el fin de evaluar el desempeño de los programas sociales ejecutados por las jurisdicciones de carácter nacional, provincial y municipal. La totalidad de las jurisdicciones del país se encuentran representadas.'
+  },
+  entes: {
+    type: 'simple',
+    text: '<strong>Entes Reguladores:</strong> Organismos estatales responsables del control de la buena prestación de los servicios públicos concesionados, tanto en calidad, como en oportunidad, cobertura y precio.'
+  }
+};
+
+function showOrg(id) {
+  // Toggle off if same
+  if (currentOrg === id) {
+    currentOrg = null;
+    document.querySelectorAll('.oc').forEach(b => b.classList.remove('sel'));
+    document.getElementById('orgPanel').classList.remove('vis');
+    document.getElementById('orgPanel').innerHTML = '';
+    return;
+  }
+  currentOrg = id;
+  document.querySelectorAll('.oc').forEach(b => b.classList.remove('sel'));
+  document.getElementById('btn-' + id).classList.add('sel');
+
+  const data = orgPanels[id];
+  const panel = document.getElementById('orgPanel');
+
+  if (data.type === 'simple') {
+    panel.innerHTML = `<div class="org-simple">${data.text}</div>`;
+  } else {
+    const h = data.header;
+    const ncards = data.cards.length;
+    const gridCls = ncards === 3 ? 'three' : 'two';
+    let cardsHTML = data.cards.map(c => {
+      const content = c.text
+        ? `<p>${c.text}</p>`
+        : `<ul>${c.list.map(li => `<li>${li}</li>`).join('')}</ul>`;
+      return `<div class="org-card ${c.cls}"><h4>${c.title}</h4>${content}</div>`;
+    }).join('');
+    panel.innerHTML = `
+      <div class="org-header-bar">
+        <div class="ohicon" style="background:${h.color}">${h.label}</div>
+        <div><div class="ohname">${h.name}</div><div class="ohdep">${h.dep}</div></div>
+      </div>
+      <div class="org-rich ${gridCls}" style="padding:8px;background:#eef4ff;border-radius:0 0 8px 8px">${cardsHTML}</div>`;
+  }
+  panel.classList.add('vis');
+}
+
+// ===== SINUOUS TIMELINE =====
+// Points sit on ZERO-CROSSINGS of the sine wave (as per sketch)
+// Full sine cycles: each hito is one half-period apart (zero crossings)
+// The wave goes: up-peak, zero(hito), down-valley, zero(hito), up-peak, ...
+// Dashed lead-in before first hito, dashed tail after last hito
+// Labels alternate: odd hitos above line, even hitos below
+
+const SVG_W = 780, SVG_H = 190;
+const N = 9;
+const AMP = 62;   // wave amplitude
+const CY = SVG_H / 2;  // center Y (the zero line)
+// Each hito is at a zero crossing: x evenly spaced
+// We add a lead-in segment before first hito
+const LEAD = 48;  // px before first hito
+const TAIL = 48;  // px after last hito
+const usableW = SVG_W - LEAD - TAIL;
+
+const tlData = [
+  { year:'1989', label:'Reforma\ndel Estado' },
+  { year:'1992', label:'Ley 24156' },
+  { year:'1994', label:'Reforma\nConst.' },
+  { year:'1998', label:'PIA' },
+  { year:'1999', label:'Ética /\nOA' },
+  { year:'2000', label:'UIF' },
+  { year:'2002', label:'Red\nFederal' },
+  { year:'2016', label:'AAIP' },
+  { year:'2018', label:'Decreto\n72' }
+];
+
+const tlDetail = [
+  'Ley 23696 de Reforma del Estado: el control gubernamental y la transparencia cobran un fuerte impulso.',
+  'Ley 24156 de Administración Financiera y de los Sistemas de Control del SPN: se crean la SIGEN, la AGN y la Comisión Parlamentaria Mixta Revisora de Cuentas.',
+  'Reforma de la Constitución Nacional: se incorporan con rango constitucional la AGN (Art. 85), el Defensor del Pueblo (Art. 86) y los Entes Reguladores de servicios públicos (Art. 42).',
+  'Ley 24946 orgánica del Ministerio Público: crea la Fiscalía Nacional de Investigaciones Administrativas y delimita sus competencias, dando origen a la Procuraduría de Investigaciones Administrativas (PIA).',
+  'Ley 25188 de Ética en la Función Pública y Ley 25233 de Ministerios: se crea la Oficina Anticorrupción (OA).',
+  'Ley 25246: se crea la Unidad de Información Financiera (UIF) con autonomía y autarquía financiera.',
+  'Se crea la Red Federal de Control Público.',
+  'Ley 27275: se crea la Agencia de Acceso a la Información Pública (AAIP).',
+  'Decreto 72/2018: actualiza y moderniza el sistema de Administración Financiera y los Sistemas de Control del Sector Público Nacional.'
+];
+
+// Hitos sit on ZERO CROSSINGS — y = CY for all hito points
+// The wave oscillates between hitos; peaks/valleys are halfway between consecutive hitos
+function getPts() {
+  const pts = [];
+  for (let i = 0; i < N; i++) {
+    const x = LEAD + (i / (N - 1)) * usableW;
+    pts.push({ x, y: CY }); // all on center line
+  }
+  return pts;
+}
+
+// Generate smooth sine path between two zero-crossing points
+// direction: +1 = peak up first, -1 = valley down first
+function sinSegPath(x1, x2, dir) {
+  const mx = (x1 + x2) / 2;
+  const peakY = CY - dir * AMP;
+  return `M${x1.toFixed(1)},${CY.toFixed(1)} C${(x1+(mx-x1)*0.5).toFixed(1)},${CY.toFixed(1)} ${(x1+(mx-x1)*0.5).toFixed(1)},${peakY.toFixed(1)} ${mx.toFixed(1)},${peakY.toFixed(1)} C${(mx+(x2-mx)*0.5).toFixed(1)},${peakY.toFixed(1)} ${(mx+(x2-mx)*0.5).toFixed(1)},${CY.toFixed(1)} ${x2.toFixed(1)},${CY.toFixed(1)}`;
+}
+
+const pts = getPts();
+let revealed = 0;
+let openHito = -1;
+
+function cubicPath(p1, p2) {
+  // Smooth cubic bezier between two points
+  const cpx = (p1.x + p2.x) / 2;
+  return `M${p1.x.toFixed(1)},${p1.y.toFixed(1)} C${cpx.toFixed(1)},${p1.y.toFixed(1)} ${cpx.toFixed(1)},${p2.y.toFixed(1)} ${p2.x.toFixed(1)},${p2.y.toFixed(1)}`;
+}
+
+function buildSVG() {
+  const svg = document.getElementById('tl-svg');
+  let html = `<defs>
+    <linearGradient id="tlg" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#4a9fd4"/>
+      <stop offset="100%" stop-color="#f0c040"/>
+    </linearGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>`;
+
+  // Dashed lead-in before first hito (always visible)
+  const leadX0 = 4, leadX1 = pts[0].x;
+  const leadMid = (leadX0 + leadX1) / 2;
+  const leadPeakY = CY - AMP; // lead-in goes up (first arch is upward)
+  html += `<path d="M${leadX0},${CY} C${leadX0+8},${CY} ${leadX0+8},${leadPeakY} ${leadMid},${leadPeakY} C${leadMid+8},${leadPeakY} ${leadX1-4},${CY} ${leadX1},${CY}"
+    stroke="#4a9fd4" stroke-width="2" fill="none" stroke-dasharray="5,4" opacity="0.45"/>`;
+
+  // Revealed sine segments between consecutive hito points
+  // direction alternates: first segment goes UP (peak above), second DOWN (valley below), etc.
+  for (let i = 0; i < revealed - 1; i++) {
+    const dir = (i % 2 === 0) ? 1 : -1; // 1=peak up, -1=valley down
+    const seg = sinSegPath(pts[i].x, pts[i+1].x, dir);
+    const pct = i / (N - 2);
+    html += `<path d="${seg}" stroke="url(#tlg)" stroke-width="3" fill="none" stroke-linecap="round" filter="url(#glow)"/>`;
+  }
+
+  // Dashed tail after last hito (if all revealed)
+  if (revealed >= N) {
+    const lx = pts[N-1].x;
+    const tailX = lx + TAIL - 4;
+    const tailMid = (lx + tailX) / 2;
+    const tailDir = ((N-1) % 2 === 0) ? 1 : -1;
+    const tailPeak = CY - tailDir * AMP;
+    html += `<path d="M${lx},${CY} C${lx+8},${CY} ${lx+8},${tailPeak} ${tailMid},${tailPeak} C${tailMid+8},${tailPeak} ${tailX-4},${CY} ${tailX},${CY}"
+      stroke="#f0c040" stroke-width="2" fill="none" stroke-dasharray="5,4" opacity="0.5"/>`;
+    html += `<text x="${tailX+6}" y="${CY+5}" font-size="14" fill="#a8c8f0" opacity="0.7">…</text>`;
+  }
+
+  // Dots and labels for revealed hitos
+  for (let i = 0; i < revealed; i++) {
+    const p = pts[i];
+    const isOpen = openHito === i;
+    const isNextClick = (i === revealed - 1) && !isOpen;
+    const dotColor = isOpen ? '#f0c040' : '#4a9fd4';
+    const textColor = isOpen ? '#f0c040' : '#e0eeff';
+    const subColor = isOpen ? '#ffd080' : '#8ab4d8';
+
+    // Halo
+    html += `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="12" fill="${isOpen?'rgba(240,192,64,.18)':'rgba(74,159,212,.12)'}"/>`;
+
+    // Pulse ring on next clickable
+    if (isNextClick) {
+      html += `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="9" fill="none" stroke="#f0c040" stroke-width="1.5">
+        <animate attributeName="r" values="8;16;8" dur="1.8s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.9;0;0.9" dur="1.8s" repeatCount="indefinite"/>
+      </circle>`;
+    }
+
+    // Main dot
+    html += `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="7" fill="${dotColor}" stroke="#0d1e38" stroke-width="2.5" style="cursor:pointer" onclick="clickHito(${i})"/>`;
+
+    // Labels: alternate above/below based on index
+    // Even indices (0,2,4,6,8): label BELOW the line (valleys come after)
+    // Odd indices (1,3,5,7): label ABOVE the line
+    const above = (i % 2 === 1); // odd = above
+    const d = tlData[i];
+    const lines = d.label.split('\n');
+    const yearOff = above ? -20 : 20;
+    const subOff = above ? -32 : 32;
+    const yearY = (p.y + yearOff).toFixed(1);
+
+    html += `<text x="${p.x.toFixed(1)}" y="${yearY}" text-anchor="middle" font-size="12" font-weight="700" fill="${textColor}" style="cursor:pointer" onclick="clickHito(${i})">${d.year}</text>`;
+    lines.forEach((line, li) => {
+      const sign = above ? -1 : 1;
+      const ly = (p.y + (above ? -(33 + li*12) : (33 + li*12))).toFixed(1);
+      html += `<text x="${p.x.toFixed(1)}" y="${ly}" text-anchor="middle" font-size="10" fill="${subColor}" style="cursor:pointer" onclick="clickHito(${i})">${line}</text>`;
+    });
+  }
+
+  // Ghost dot for next unrevealed
+  if (revealed > 0 && revealed < N) {
+    const np = pts[revealed];
+    html += `<circle cx="${np.x.toFixed(1)}" cy="${np.y.toFixed(1)}" r="6" fill="rgba(255,255,255,.05)" stroke="rgba(255,255,255,.18)" stroke-width="1.5" stroke-dasharray="3,2"/>`;
+  }
+
+  svg.innerHTML = html;
+}
+
+function clickHito(i) {
+  if (i > revealed - 1) return;
+  if (openHito === i) { closeHito(); return; }
+  openHito = i;
+  document.getElementById('tlText').textContent = '📍 ' + tlData[i].year + ' — ' + tlDetail[i];
+  document.getElementById('tlClose').classList.add('show');
+  document.getElementById('tlHint').style.display = 'none';
+  buildSVG();
+}
+
+function closeHito() {
+  openHito = -1;
+  document.getElementById('tlClose').classList.remove('show');
+  if (revealed < N) {
+    revealed++;
+    const hint = document.getElementById('tlHint');
+    hint.style.display = 'block';
+    if (revealed < N) {
+      hint.textContent = 'Hito ' + revealed + ' de ' + N + ' — hacé clic sobre el punto resaltado';
+      document.getElementById('tlText').textContent = '👆 Hacé clic sobre el siguiente punto para continuar.';
+    } else {
+      hint.textContent = '✅ ¡Recorrido completo!';
+      document.getElementById('tlText').textContent = '✅ ¡Línea temporal completada! El control gubernamental continúa evolucionando…';
+    }
+  } else {
+    document.getElementById('tlText').textContent = '✅ ¡Recorrido completo! El control gubernamental continúa evolucionando…';
+    document.getElementById('tlHint').style.display = 'none';
+  }
+  buildSVG();
+}
+
+function initTimeline() {
+  revealed = 1;
+  openHito = -1;
+  document.getElementById('tlText').textContent = '👆 Hacé clic sobre el hito resaltado para comenzar el recorrido histórico.';
+  document.getElementById('tlHint').textContent = 'Hito 1 de 9 — hacé clic sobre el punto resaltado';
+  document.getElementById('tlHint').style.display = 'block';
+  document.getElementById('tlClose').classList.remove('show');
+  buildSVG();
+}
+
+// ===== NAVIGATION =====
+function buildDots() {
+  const ind = document.getElementById('sind');
+  ind.innerHTML = '';
+  for (let i = 1; i <= TOTAL; i++) {
+    const d = document.createElement('div');
+    d.className = 'di' + (i === cs ? ' active' : '');
+    d.onclick = (function(n){ return function(){ goTo(n); }; })(i);
+    ind.appendChild(d);
+  }
+  document.getElementById('sctr').textContent = 'Slide ' + cs + ' de ' + TOTAL;
+  document.getElementById('prog').style.width = (cs / TOTAL * 100) + '%';
+  document.getElementById('btnP').disabled = cs === 1;
+  document.getElementById('btnN').disabled = cs === TOTAL;
+}
+
+function goTo(n) {
+  const cur = document.querySelector('.slide[data-s="' + cs + '"]');
+  if (cur) { cur.classList.remove('active'); cur.style.display = 'none'; }
+  cs = n;
+  const nxt = document.querySelector('.slide[data-s="' + cs + '"]');
+  if (nxt) { nxt.style.display = ''; nxt.classList.add('active'); }
+  if (cs === 4) initTimeline();
+  buildDots();
+}
+
+function goSlide(dir) {
+  const ns = cs + dir;
+  if (ns < 1 || ns > TOTAL) return;
+  const cur = document.querySelector('.slide[data-s="' + cs + '"]');
+  if (cur) {
+    cur.classList.add('exit');
+    setTimeout(() => { cur.classList.remove('exit', 'active'); cur.style.display = 'none'; }, 350);
+  }
+  cs = ns;
+  const nxt = document.querySelector('.slide[data-s="' + cs + '"]');
+  if (nxt) {
+    nxt.style.display = '';
+    nxt.style.transform = dir > 0 ? 'translateX(60px)' : 'translateX(-60px)';
+    nxt.style.opacity = '0';
+    setTimeout(() => { nxt.classList.add('active'); nxt.style.transform = ''; nxt.style.opacity = ''; }, 20);
+  }
+  if (cs === 4) initTimeline();
+  buildDots();
+}
+
+document.querySelectorAll('.slide:not([data-s="1"])').forEach(s => s.style.display = 'none');
+buildDots();
+</script>
+</body>
+</html>

@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Módulo 4 — Hacia dónde vamos (Contenido)</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#0a1628;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
+.pres{background:#0f2444;border-radius:14px;overflow:hidden;width:100%;max-width:860px;box-shadow:0 8px 40px rgba(0,0,0,.5)}
+.top-bar{background:#1a3a6b;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #2563a8}
+.tbar{font-size:11px;color:#a8c8f0;letter-spacing:.06em;text-transform:uppercase}
+.obadge{background:rgba(255,255,255,.12);color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;margin-left:5px}
+.pbar{height:4px;background:rgba(255,255,255,.1)}
+.pfill{height:100%;background:linear-gradient(90deg,#1a3a6b,#2563a8);transition:width .4s}
+.slide-area{height:500px;position:relative;overflow:hidden}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-start;align-items:flex-start;padding:30px 38px;opacity:0;transform:translateX(60px);transition:opacity .35s,transform .35s cubic-bezier(.4,0,.2,1);pointer-events:none;overflow-y:auto}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.exit{opacity:0;transform:translateX(-60px)}
+.slide.cover{background:linear-gradient(135deg,#0f2444 0%,#1a4a8a 55%,#1a3a6b 100%);align-items:center;justify-content:center;text-align:center}
+.slide.light{background:#f5f8ff}
+.slide.dark{background:#0d1e38}
+.slide.done{background:#0d1e38;align-items:center;justify-content:center;text-align:center}
+.deco{position:absolute;top:0;right:0;width:200px;height:200px;background:rgba(74,159,212,.1);border-radius:0 0 0 100%;pointer-events:none}
+.deco2{position:absolute;bottom:0;left:0;width:150px;height:150px;background:rgba(240,192,64,.06);border-radius:0 100% 0 0;pointer-events:none}
+.cv-badge{display:inline-block;background:#f0c040;color:#1a3a6b;font-size:12px;font-weight:700;padding:7px 22px;border-radius:20px;letter-spacing:.08em;margin-bottom:16px}
+.cv-title{font-size:36px;font-weight:800;color:#fff;line-height:1.15;margin-bottom:10px}
+.cv-title span{color:#f0c040}
+.cv-sub{font-size:13px;color:#a8c8f0;font-style:italic}
+.sh2{font-size:16px;font-weight:700;color:#1a3a6b;margin-bottom:14px;border-left:4px solid #f0c040;padding-left:12px;width:100%}
+.sh2w{font-size:16px;font-weight:700;color:#f0c040;margin-bottom:14px}
+.mb{background:#1a3a6b;border-radius:8px;padding:13px 17px;width:100%;margin-bottom:12px}
+.mb p{font-size:13.5px;color:#c8e0f8;line-height:1.7}
+.mb strong{color:#f0c040}
+.ib{background:#fff;border:1px solid #d0e4f8;border-radius:8px;padding:12px 14px}
+.ib h4{font-size:11.5px;font-weight:700;color:#2563a8;text-transform:uppercase;letter-spacing:.04em;margin-bottom:7px}
+.ib ul{list-style:none}
+.ib ul li{font-size:12.5px;color:#334;padding:2px 0 2px 13px;position:relative;line-height:1.45}
+.ib ul li::before{content:'▸';position:absolute;left:0;color:#f0c040;font-size:9px;top:4px}
+.ib p{font-size:12.5px;color:#334;line-height:1.6}
+/* banner */
+.banner{border-radius:8px;padding:11px 15px;font-size:13px;line-height:1.65;width:100%;margin-top:10px}
+.banner.gold{background:#e8f4ff;color:#1a3a6b;border-left:3px solid #2563a8}
+.banner.dark{background:rgba(255,255,255,.07);color:#c8e0f8;border-left:3px solid #f0c040}
+/* action lines */
+.lac{display:flex;align-items:flex-start;gap:13px;background:#fff;border-radius:9px;padding:12px 15px;border-left:4px solid #f0c040;margin-bottom:9px;width:100%}
+.lac.l2{border-left-color:#4adc8c}
+.lac.l3{border-left-color:#4ab4ff}
+.lac.l4{border-left-color:#dc4adc}
+.lac.l5{border-left-color:#ff6a6a}
+.lacnum{width:30px;height:30px;border-radius:50%;background:#f0c040;color:#1a3a6b;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.lac.l2 .lacnum{background:#4adc8c;color:#0a3a1a}
+.lac.l3 .lacnum{background:#4ab4ff;color:#0a1a3a}
+.lac.l4 .lacnum{background:#dc4adc;color:#fff}
+.lac.l5 .lacnum{background:#ff6a6a;color:#fff}
+.lactext h4{font-size:12.5px;font-weight:700;color:#1a3a6b;margin-bottom:3px}
+.lactext p{font-size:12px;color:#446;line-height:1.5}
+/* comite */
+.combox{background:#1a3a6b;border-radius:9px;padding:13px 16px;width:100%}
+.combox h4{font-size:12px;font-weight:700;color:#f0c040;margin-bottom:8px}
+.combox ul{list-style:none}
+.combox ul li{font-size:12.5px;color:#c8e0f8;padding:4px 0 4px 13px;position:relative;line-height:1.45}
+.combox ul li::before{content:'●';position:absolute;left:0;color:#f0c040;font-size:8px;top:6px}
+/* key concept */
+.key-concept{background:linear-gradient(135deg,#1a3a6b,#2563a8);border-radius:9px;padding:14px 18px;width:100%;border-left:4px solid #f0c040;box-shadow:0 3px 14px rgba(240,192,64,.15)}
+.key-concept .kc-label{font-size:11px;font-weight:800;color:#f0c040;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+.key-concept .kc-text{font-size:13.5px;color:#e8f4ff;line-height:1.7}
+/* tc */
+.tc{display:grid;grid-template-columns:1fr 1fr;gap:11px;width:100%}
+/* controls */
+.controls{background:#1a3a6b;border-top:1px solid rgba(255,255,255,.09);padding:12px 20px;display:flex;align-items:center;justify-content:space-between}
+.cbtn{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.16);color:#fff;padding:7px 18px;border-radius:7px;cursor:pointer;font-size:12px;transition:all .2s}
+.cbtn:hover:not(:disabled){background:rgba(255,255,255,.2)}
+.cbtn:disabled{opacity:.3;cursor:not-allowed}
+.sind{display:flex;gap:5px;justify-content:center;align-items:center}
+.di{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.2);cursor:pointer;transition:all .2s}
+.di.active{background:#f0c040;transform:scale(1.3)}
+.sctr{font-size:11px;color:#a8c8f0;min-width:90px;text-align:right}
+</style>
+</head>
+<body>
+<div class="pres">
+  <div class="top-bar">
+    <div class="tbar">La Importancia del Control Interno en la APN</div>
+    <div><span class="obadge">SOFSA</span><span class="obadge">UAI</span></div>
+  </div>
+  <div class="pbar"><div class="pfill" id="prog" style="width:25%"></div></div>
+
+  <div class="slide-area" id="sa">
+
+    <!-- SLIDE 1: Portada -->
+    <div class="slide cover active" data-s="1">
+      <div class="deco"></div><div class="deco2"></div>
+      <div class="cv-badge" style="background:#f0c040;color:#1a3a6b">MÓDULO 4</div>
+      <div class="cv-title">SIGEN:<br><span>Hacia dónde vamos</span></div>
+      <div class="cv-sub">Líneas de acción · Comité de Auditoría</div>
+    </div>
+
+    <!-- SLIDE 3: Líneas de acción -->
+    <div class="slide light" data-s="2">
+      <div class="sh2">Líneas de acción de la SIGEN</div>
+      <div class="lac">
+        <div class="lacnum">1</div>
+        <div class="lactext">
+          <h4>Jerarquizar el control para fortalecer el Estado y la democracia</h4>
+          <p>Un sistema de control interno fortalecido coadyuva al cumplimiento de los objetivos de la gestión. Herramienta clave: el <strong>Comité de Auditoría</strong>, órgano colegiado creado para tratar temas específicos del sistema de control interno.</p>
+        </div>
+      </div>
+      <div class="lac l2">
+        <div class="lacnum">2</div>
+        <div class="lactext">
+          <h4>Vínculo permanente con los Tribunales de Cuentas de todo el país</h4>
+          <p>Decreto n.° 38/2014: reconoce a la Red Federal de Control Público como instrumento de integración federal y de ordenamiento territorial, designando a la SIGEN como autoridad de aplicación (Art. n.° 6).</p>
+        </div>
+      </div>
+      <div class="lac l3">
+        <div class="lacnum">3</div>
+        <div class="lactext">
+          <h4>Capacitación a los agentes del control</h4>
+          <p>Especialización en las temáticas que permitan cumplir eficientemente con las funciones de control asignadas.</p>
+        </div>
+      </div>
+      <div class="lac l4">
+        <div class="lacnum">4</div>
+        <div class="lactext">
+          <h4>Celebrar convenios con diversos organismos</h4>
+          <p>Para el tratamiento específico de temas en conjunto con distintas instituciones.</p>
+        </div>
+      </div>
+      <div class="lac l5">
+        <div class="lacnum">5</div>
+        <div class="lactext">
+          <h4>Observatorio de Políticas de Género</h4>
+          <p>Relevamiento y análisis de datos, generación de información vinculada al cumplimiento de políticas públicas en materia de perspectiva e igualdad de género, y desarrollo de actividades de capacitación en la temática.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3: Comité de Auditoría — Res. SIGEN n.° 399/2025 -->
+    <div class="slide dark" data-s="3" style="padding:22px 30px">
+      <div class="sh2w">Comité de Auditoría — Res. SIGEN n.° 399/2025</div>
+      <div style="font-size:13px;color:#a8c8f0;margin-bottom:11px">Hacé clic en cada tarjeta para conocer un resumen de las principales facultades y competencias del Comité de Auditoría establecidas por la SIGEN:</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;width:100%;margin-bottom:10px">
+        <div onclick="showCA(0)" id="ca0" style="background:#1a3a6b;border:2px solid #2563a8;border-radius:8px;padding:12px 10px;text-align:center;cursor:pointer;transition:all .2s">
+          <div style="font-size:22px;margin-bottom:5px">🏛️</div>
+          <div style="font-size:11.5px;font-weight:700;color:#4ab4ff;line-height:1.3">Asistencia al<br>Directorio</div>
+        </div>
+        <div onclick="showCA(1)" id="ca1" style="background:#1a3a6b;border:2px solid #2563a8;border-radius:8px;padding:12px 10px;text-align:center;cursor:pointer;transition:all .2s">
+          <div style="font-size:22px;margin-bottom:5px">🔍</div>
+          <div style="font-size:11.5px;font-weight:700;color:#4adc8c;line-height:1.3">Supervisión de la<br>Auditoría Interna</div>
+        </div>
+        <div onclick="showCA(2)" id="ca2" style="background:#1a3a6b;border:2px solid #2563a8;border-radius:8px;padding:12px 10px;text-align:center;cursor:pointer;transition:all .2s">
+          <div style="font-size:22px;margin-bottom:5px">⚖️</div>
+          <div style="font-size:11.5px;font-weight:700;color:#f0c040;line-height:1.3">Ética, integridad<br>y transparencia</div>
+        </div>
+        <div onclick="showCA(3)" id="ca3" style="background:#1a3a6b;border:2px solid #2563a8;border-radius:8px;padding:12px 10px;text-align:center;cursor:pointer;transition:all .2s">
+          <div style="font-size:22px;margin-bottom:5px">📌</div>
+          <div style="font-size:11.5px;font-weight:700;color:#ff9a9a;line-height:1.3">Otras funciones<br>relevantes</div>
+        </div>
+      </div>
+      <div id="caDet" style="background:#1a3a6b;border-radius:8px;padding:13px 16px;font-size:12.5px;color:#c8e0f8;line-height:1.65;width:100%;border-left:4px solid #f0c040;min-height:90px;display:none"></div>
+    </div>
+
+    <!-- SLIDE 4: Cierre -->
+
+    <div class="slide done" data-s="4">
+      <div style="font-size:42px;margin-bottom:14px">📥</div>
+      <div style="font-size:22px;font-weight:700;color:#f0c040;margin-bottom:12px">¡Contenido completado!</div>
+      <div style="font-size:14px;color:#a8c8f0;max-width:440px;line-height:1.75;margin-bottom:22px;text-align:center">
+        Ya recorriste las líneas de acción actuales de la SIGEN y el rol del Comité de Auditoría.<br><br>
+        <strong style="color:#fff">Antes de continuar con la evaluación,<br>descargá el material de referencia.</strong>
+      </div>
+      <a href="#" style="background:#f0c040;color:#1a3a6b;font-weight:700;font-size:13px;padding:10px 28px;border-radius:8px;text-decoration:none;display:inline-block">📄 Descargar material</a>
+    </div>
+
+  </div><!-- slide-area -->
+
+  <div class="controls">
+    <button class="cbtn" id="btnP" onclick="goSlide(-1)" disabled>← Anterior</button>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+      <div class="sind" id="sind"></div>
+      <div class="sctr" id="sctr">Slide 1 de 4</div>
+    </div>
+    <button class="cbtn" id="btnN" onclick="goSlide(1)">Siguiente →</button>
+  </div>
+</div>
+
+<script>
+const TOTAL = 4;
+let cs = 1;
+
+const caData = [
+  {
+    color: '#4ab4ff',
+    html: '<strong style="color:#4ab4ff">Asistencia al Directorio:</strong><ul style="list-style:none;margin-top:8px"><li style="padding:3px 0 3px 14px;position:relative;font-size:12.5px;line-height:1.5"><span style="position:absolute;left:0;color:#4ab4ff">▸</span>Supervisar los sistemas de control interno y administrativo-contable-presupuestario</li><li style="padding:3px 0 3px 14px;position:relative;font-size:12.5px;line-height:1.5"><span style="position:absolute;left:0;color:#4ab4ff">▸</span>Monitorear la gestión de riesgos</li><li style="padding:3px 0 3px 14px;position:relative;font-size:12.5px;line-height:1.5"><span style="position:absolute;left:0;color:#4ab4ff">▸</span>Verificar el seguimiento de planes estratégicos y operativos</li></ul>'
+  },
+  {
+    color: '#4adc8c',
+    html: '<strong style="color:#4adc8c">Supervisión de la Función de Auditoría Interna:</strong><ul style="list-style:none;margin-top:8px"><li style="padding:3px 0 3px 14px;position:relative;font-size:12.5px;line-height:1.5"><span style="position:absolute;left:0;color:#4adc8c">▸</span>Verificar el diseño y cumplimiento del Plan Ciclo o Estratégico de la UAI</li><li style="padding:3px 0 3px 14px;position:relative;font-size:12.5px;line-height:1.5"><span style="position:absolute;left:0;color:#4adc8c">▸</span>Monitorear el cumplimiento del Plan Anual de Trabajo de la UAI</li><li style="padding:3px 0 3px 14px;position:relative;font-size:12.5px;line-height:1.5"><span style="position:absolute;left:0;color:#4adc8c">▸</span>Considerar los Informes de Auditoría Interna y restantes actividades cumplimentadas por la misma</li><li style="padding:3px 0 3px 14px;position:relative;font-size:12.5px;line-height:1.5"><span style="position:absolute;left:0;color:#4adc8c">▸</span>Efectuar el seguimiento de las observaciones de alto impacto y de aquellas cuyos plazos de vencimiento para su regularización fueron superados</li></ul>'
+  },
+  {
+    color: '#f0c040',
+    html: '<strong style="color:#f0c040">Ética, integridad, cumplimiento, transparencia y sostenibilidad:</strong><ul style="list-style:none;margin-top:8px"><li style="padding:3px 0 3px 14px;position:relative;font-size:12.5px;line-height:1.5"><span style="position:absolute;left:0;color:#f0c040">▸</span>Monitorear las políticas éticas y el funcionamiento del Programa de Integridad</li><li style="padding:3px 0 3px 14px;position:relative;font-size:12.5px;line-height:1.5"><span style="position:absolute;left:0;color:#f0c040">▸</span>Opinar sobre el cumplimiento del Código de Gobierno Societario</li></ul>'
+  },
+  {
+    color: '#ff9a9a',
+    html: '<strong style="color:#ff9a9a">Otras funciones relevantes:</strong><ul style="list-style:none;margin-top:8px"><li style="padding:3px 0 3px 14px;position:relative;font-size:12.5px;line-height:1.5"><span style="position:absolute;left:0;color:#ff9a9a">▸</span>Emitir opinión sobre las condiciones y valores de mercado de las operaciones con partes relacionadas</li><li style="padding:3px 0 3px 14px;position:relative;font-size:12.5px;line-height:1.5"><span style="position:absolute;left:0;color:#ff9a9a">▸</span>Supervisar el proceso de selección de auditores externos y realizar el seguimiento de su labor</li></ul>'
+  }
+];
+let openCA = -1;
+function showCA(i) {
+  const det = document.getElementById('caDet');
+  document.querySelectorAll('[id^="ca"]').forEach((el, j) => {
+    el.style.opacity = (openCA === i || j !== i) && openCA !== i ? '1' : j === i ? '1' : '0.6';
+  });
+  if (openCA === i) {
+    openCA = -1;
+    det.style.display = 'none';
+    document.querySelectorAll('[id^="ca"]').forEach(el => el.style.opacity = '1');
+    return;
+  }
+  openCA = i;
+  det.style.borderLeftColor = caData[i].color;
+  det.innerHTML = caData[i].html;
+  det.style.display = 'block';
+  document.querySelectorAll('[id^="ca"]').forEach((el, j) => {
+    el.style.opacity = j === i ? '1' : '0.6';
+  });
+}
+
+function buildDots() {
+  const ind = document.getElementById('sind');
+  ind.innerHTML = '';
+  for (let i = 1; i <= TOTAL; i++) {
+    const d = document.createElement('div');
+    d.className = 'di' + (i === cs ? ' active' : '');
+    d.onclick = (function(n){ return function(){ goTo(n); }; })(i);
+    ind.appendChild(d);
+  }
+  document.getElementById('sctr').textContent = 'Slide ' + cs + ' de ' + TOTAL;
+  document.getElementById('prog').style.width = (cs / TOTAL * 100) + '%';
+  document.getElementById('btnP').disabled = cs === 1;
+  document.getElementById('btnN').disabled = cs === TOTAL;
+}
+
+function goTo(n) {
+  const cur = document.querySelector('.slide[data-s="' + cs + '"]');
+  if (cur) { cur.classList.remove('active'); cur.style.display = 'none'; }
+  cs = n;
+  const nxt = document.querySelector('.slide[data-s="' + cs + '"]');
+  if (nxt) { nxt.style.display = ''; nxt.classList.add('active'); }
+  buildDots();
+}
+
+function goSlide(dir) {
+  const ns = cs + dir;
+  if (ns < 1 || ns > TOTAL) return;
+  const cur = document.querySelector('.slide[data-s="' + cs + '"]');
+  if (cur) {
+    cur.classList.add('exit');
+    setTimeout(() => { cur.classList.remove('exit', 'active'); cur.style.display = 'none'; }, 350);
+  }
+  cs = ns;
+  const nxt = document.querySelector('.slide[data-s="' + cs + '"]');
+  if (nxt) {
+    nxt.style.display = '';
+    nxt.style.transform = dir > 0 ? 'translateX(60px)' : 'translateX(-60px)';
+    nxt.style.opacity = '0';
+    setTimeout(() => { nxt.classList.add('active'); nxt.style.transform = ''; nxt.style.opacity = ''; }, 20);
+  }
+  buildDots();
+}
+
+document.querySelectorAll('.slide:not([data-s="1"])').forEach(s => s.style.display = 'none');
+buildDots();
+</script>
+</body>
+</html>
