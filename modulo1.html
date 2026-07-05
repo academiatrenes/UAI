@@ -51,8 +51,8 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#0a1628;min-height:100vh
 
 /* rich mosaic panel (for SIGEN, AGN, UIF, AAIP, OA) */
 .org-rich{display:grid;gap:8px}
-.org-rich.two{grid-template-columns:1fr 1fr}
-.org-rich.three{grid-template-columns:1fr 1fr 1fr}
+.org-rich.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.org-rich.three{grid-template-columns:repeat(3,minmax(0,1fr))}
 .org-card{background:#fff;border-radius:8px;padding:11px 13px;border-top:3px solid #2563a8}
 .org-card.green{border-top-color:#1a7a4a}
 .org-card.amber{border-top-color:#b89020}
